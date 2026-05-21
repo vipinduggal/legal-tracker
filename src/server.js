@@ -54,6 +54,6 @@ app.get('/', (req, res) => {
 
 export function startServer() {
   const port = process.env.PORT || 3000;
-  app.listen(port, () => logger.info('Dashboard at http://localhost:' + port));
+  app.listen(port, "0.0.0.0", () => logger.info('Dashboard at http://localhost:' + port));
   return app;
 }
