@@ -11,6 +11,10 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
 app.use(express.json());
 
+// Health check for Railway — must respond immediately
+app.get('/health', (req, res) => res.status(200).json({ status: 'ok' }));
+app.get('/healthz', (req, res) => res.status(200).json({ status: 'ok' }));
+
 app.get('/api/accounts', async (req, res) => {
   const allResearch = await getAllResearch();
   const data = ACCOUNTS.map(a => ({
