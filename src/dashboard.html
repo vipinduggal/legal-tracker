@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Legal Account Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--navy:#0F2240;--blue:#1E56A0;--bl:#EBF2FC;--teal:#0A7C6E;--tl:#E6F5F2;--amber:#B45309;--al:#FEF3C7;--red:#991B1B;--rl:#FEE2E2;--green:#166534;--gl:#DCFCE7;--g0:#F9FAFB;--g1:#F3F4F6;--g2:#E5E7EB;--g4:#9CA3AF;--g5:#6B7280;--g6:#4B5563;--g7:#374151;--g9:#111827;--f:"DM Sans",sans-serif;--mono:"DM Mono",monospace;--r:10px;--rl:14px}
+body{font-family:var(--f);font-size:14px;color:var(--g9);background:var(--g0);height:100vh;overflow:hidden;display:flex;flex-direction:column}
+.tb{height:52px;background:var(--navy);display:flex;align-items:center;padding:0 20px;gap:12px;flex-shrink:0}
+.ti{font-size:15px;font-weight:600;color:#fff}
+.su{font-size:12px;color:rgba(255,255,255,.4)}
+.ri{margin-left:auto;display:flex;align-items:center;gap:8px}
+.ts{font-size:12px;color:rgba(255,255,255,.55);display:flex;align-items:center;gap:5px}
+.ts strong{color:rgba(255,255,255,.9)}
+.tdv{width:1px;height:16px;background:rgba(255,255,255,.12)}
+.ld{width:7px;height:7px;border-radius:50%;background:#34D399}
+.na{font-size:12px;color:rgba(255,255,255,.85);text-decoration:none;padding:5px 11px;border:1px solid rgba(255,255,255,.3);border-radius:6px;font-weight:500}
+.na:hover{background:rgba(255,255,255,.1)}
+.nd{font-size:11px;color:rgba(255,255,255,.5);text-decoration:none;padding:4px 8px;border:1px solid rgba(255,255,255,.15);border-radius:5px}
+.lay{display:flex;flex:1;overflow:hidden}
+.sb{width:240px;background:#fff;border-right:1px solid var(--g2);display:flex;flex-direction:column;overflow:hidden}
+.sbs{padding:10px}
+.sbi{display:flex;align-items:center;gap:7px;background:var(--g0);border:1px solid var(--g2);border-radius:var(--r);padding:6px 10px}
+.sbi input{border:none;background:none;outline:none;font-size:12px;color:var(--g7);font-family:var(--f);width:100%}
+.sbi input::placeholder{color:var(--g4)}
+.al{flex:1;overflow-y:auto;padding:4px 8px 8px}
+.ai{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:var(--r);cursor:pointer;border:1px solid transparent;margin-bottom:1px;transition:all .12s}
+.ai:hover{background:var(--g0);border-color:var(--g2)}
+.ai.active{background:var(--bl);border-color:#BFCFE8}
+.av{width:27px;height:27px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0}
+.an{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--g7)}
+.ai.active .an{color:var(--blue)}
+.as{font-size:10px;color:var(--g4);margin-top:1px}
+.mn{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.ne{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--g4)}
+.ah{padding:14px 20px 0;border-bottom:1px solid var(--g2);flex-shrink:0}
+.aht{display:flex;align-items:flex-start;margin-bottom:12px}
+.ahl{display:flex;align-items:center;gap:11px}
+.hv{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0}
+.hn{font-size:17px;font-weight:600;color:var(--g9);letter-spacing:-.02em}
+.hm{font-size:11px;color:var(--g5);margin-top:2px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.bdg{display:inline-flex;align-items:center;font-size:10px;font-weight:500;padding:2px 7px;border-radius:20px}
+.bg{background:var(--gl);color:var(--green)}
+.ba{background:var(--al);color:var(--amber)}
+.br{background:var(--rl);color:var(--red)}
+.bb{background:var(--bl);color:var(--blue)}
+.tabs{display:flex;overflow-x:auto;scrollbar-width:none;margin-top:2px}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:8px 13px;font-size:12px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;color:var(--g5);white-space:nowrap;transition:all .12s;display:flex;align-items:center;gap:4px}
+.tab:hover{color:var(--g7)}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue)}
+.tct{font-size:10px;padding:1px 5px;border-radius:10px;background:var(--g1);color:var(--g5)}
+.tab.active .tct{background:var(--bl);color:var(--blue)}
+.ct{flex:1;overflow-y:auto;padding:18px}
+.sl{font-size:11px;font-weight:600;color:var(--g4);text-transform:uppercase;letter-spacing:.06em;margin-bottom:9px;display:flex;align-items:center;gap:6px}
+.sl::after{content:"";flex:1;height:1px;background:var(--g1)}
+.card{background:#fff;border:1px solid var(--g2);border-radius:var(--rl);padding:13px;margin-bottom:9px}
+.cg{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:9px;margin-bottom:12px}
+.cc{background:#fff;border:1px solid var(--g2);border-radius:var(--rl);padding:12px;transition:all .12s}
+.cc:hover{box-shadow:0 4px 6px rgba(0,0,0,.07);transform:translateY(-1px)}
+.cct{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.cav{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0}
+.cn{font-size:12px;font-weight:600;color:var(--g9);line-height:1.3}
+.ct2{font-size:10px;color:var(--g5)}
+.cd{font-size:10px;color:var(--g5);display:flex;align-items:center;gap:3px;margin-top:3px}
+.cd a{color:var(--blue);text-decoration:none}
+.tag{display:inline-block;font-size:10px;font-weight:500;padding:2px 7px;border-radius:20px;margin-bottom:5px}
+.tc0{background:#F0EEFE;color:#5B45C7}
+.tc1{background:var(--bl);color:var(--blue)}
+.tc2{background:var(--al);color:var(--amber)}
+.tc3{background:var(--tl);color:var(--teal)}
+.tc4{background:var(--g1);color:var(--g6)}
+.ch{font-size:10px;color:var(--green);font-weight:500}
+.cm{font-size:10px;color:var(--amber);font-weight:500}
+.cl{font-size:10px;color:var(--red);font-weight:500}
+.pr{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.pill{font-size:12px;padding:4px 10px;border-radius:20px;border:1px solid var(--g2);color:var(--g6);background:#fff}
+.pbl{background:var(--bl);color:var(--blue);border-color:#BFCFE8}
+.ptl{background:var(--tl);color:var(--teal);border-color:#A7D7D0}
+.ppu{background:#F0EEFE;color:#5B45C7;border-color:#C4BAF5}
+.ir{background:#fff;border:1px solid var(--g2);border-radius:var(--rl);padding:12px;margin-bottom:8px}
+.irt{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:3px;gap:8px}
+.iti{font-size:13px;font-weight:600;color:var(--g9)}
+.ipe{font-size:10px;color:var(--g4);margin-bottom:4px}
+.isu{font-size:12px;color:var(--g6);line-height:1.6;margin-bottom:5px}
+.ico{font-size:11px;color:var(--g5)}
+.nt{font-size:10px;background:var(--rl);color:var(--red);padding:1px 6px;border-radius:10px;font-weight:600;margin-left:6px}
+.ib{background:linear-gradient(135deg,#FFF8E7,#FFFBF0);border:1px solid #FDE68A;border-radius:var(--rl);padding:13px;margin-bottom:15px}
+.il{font-size:10px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.it{font-size:13px;color:var(--g7);line-height:1.65}
+.trg{background:var(--g0);border:1px solid var(--g2);border-radius:var(--r);padding:9px 11px;margin-bottom:6px;font-size:12px;color:var(--g6);line-height:1.5}
+.ep{padding:32px 16px;text-align:center;color:var(--g4)}
+code{font-family:var(--mono);background:var(--g1);padding:2px 6px;border-radius:4px;font-size:11px}
+</style>
+</head>
+<body>
+<div class="tb">
+  <span style="font-size:18px">&#9878;</span>
+  <span class="ti">Legal Account Tracker</span>
+  <span class="su">Intelligence Dashboard</span>
+  <div class="ri">
+    <div class="ts"><strong id="sr">-</strong>&nbsp;researched</div>
+    <div class="tdv"></div>
+    <div class="ts"><strong id="si">-</strong>&nbsp;active issues</div>
+    <div class="tdv"></div>
+    <div class="ts"><div class="ld"></div>&nbsp;Live</div>
+    <div class="tdv"></div>
+    <a href="/manage" class="na">&#9881; Manage</a>
+    <a href="/api/status" target="_blank" class="nd">Status</a>
+    <a href="/digest" class="nd">Digest</a>
+  </div>
+</div>
+<div class="lay">
+  <div class="sb">
+    <div class="sbs"><div class="sbi">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input id="srch" placeholder="Search..." oninput="filt()">
+    </div></div>
+    <div class="al" id="list"></div>
+  </div>
+  <div class="mn">
+    <div class="ne" id="ne">
+      <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".2"><path d="M3 21h18M9 8h1M9 12h1M9 16h1M14 8h1M14 12h1M14 16h1M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/></svg>
+      <p>Select an account to view intelligence</p>
+    </div>
+    <div id="vw" style="display:none;flex-direction:column;height:100%;overflow:hidden">
+      <div class="ah">
+        <div class="aht"><div class="ahl">
+          <div class="hv" id="hv"></div>
+          <div><div class="hn" id="hn"></div><div class="hm" id="hm"></div></div>
+        </div></div>
+        <div class="tabs" id="tabs"></div>
+      </div>
+      <div class="ct" id="cnt"></div>
+    </div>
+  </div>
+</div>
+<script>
+var CL=[['#EBF2FC','#1E56A0'],['#E6F5F2','#0A7C6E'],['#F0EEFE','#5B45C7'],['#FEF3C7','#B45309'],['#FEE2E2','#991B1B'],['#DCFCE7','#166534'],['#FFF0F3','#9D174D']];
+var all=[],aid=null,atab='contacts';
+function ini(n){var p=n.split(' ');return p.map(function(w){return w[0]||'';}).join('').slice(0,2).toUpperCase();}
+function col(i){return CL[i%CL.length];}
+function sbdg(s){var m={Pending:'ba',Ongoing:'ba','Under investigation':'ba',Resolved:'bg',Settled:'bg',Dismissed:'bg',Closed:'bg'};return '<span class="bdg '+(m[s]||'bb')+'">'+s+'</span>';}
+function ibox(t){return '<div class="ib"><div class="il">Sales Intel</div><div class="it">'+t+'</div></div>';}
+function emp(m){return '<div class="ep"><p>'+m+'</p></div>';}
+function tcls(t){
+  var x=(t||'').toLowerCase().replace(/[^a-z]/g,'');
+  var m={
+    clo:'tc0',gc:'tc1',deputygc:'tc1',associategc:'tc1',
+    litigation:'tc2',litigator:'tc2',headoflitigation:'tc2',
+    headoflegaloperations:'tc3',legalops:'tc3',
+    headofemployment:'tc3',headofip:'tc3',headofprivacy:'tc3',
+    headofcompliance:'tc3',headofregulatory:'tc3',headofcorporate:'tc3',
+    ceo:'tc4',cfo:'tc4',coo:'tc4',ciso:'tc4',
+  };
+  return m[x]||'tc4';
+}
+function ccls(c){return c==='High'?'ch':c==='Medium'?'cm':'cl';}
+async function init(){
+  try{
+    var res=await Promise.all([fetch('/api/accounts').then(function(r){return r.json();}),fetch('/api/status').then(function(r){return r.json();})]);
+    all=res[0];
+    document.getElementById('sr').textContent=res[1].researched+'/'+res[1].accounts;
+    document.getElementById('si').textContent=all.reduce(function(s,a){return s+(a.activeIssues||0);},0);
+    rlist();
+    var f=all.find(function(a){return a.hasData;})||all[0];
+    if(f)sel(f.id);
+  }catch(e){console.error('Init error:',e);}
+}
+function filt(){rlist(document.getElementById('srch').value.toLowerCase());}
+function rlist(q){
+  q=q||'';
+  var f=all.filter(function(a){return !q||a.name.toLowerCase().includes(q)||a.industry.toLowerCase().includes(q);});
+  var el=document.getElementById('list');
+  if(!f.length){el.innerHTML='<div style="padding:14px;text-align:center;color:#9CA3AF;font-size:12px">No matches</div>';return;}
+  el.innerHTML=f.map(function(a,i){
+    var c=col(i);
+    var sub=a.activeIssues>0?('! '+a.activeIssues+' issue'+(a.activeIssues>1?'s':'')):(a.hasData?(a.contactCount||0)+' contacts':'needs research');
+    return '<div class="ai'+(a.id===aid?' active':'')+'" onclick="sel(\''+a.id+'\')">'+'<div class="av" style="background:'+c[0]+';color:'+c[1]+'">'+ini(a.name)+'</div>'+'<div style="min-width:0"><div class="an">'+a.name+'</div><div class="as">'+sub+'</div></div></div>';
+  }).join('');
+}
+async function sel(id){
+  try{aid=id;rlist();var a=await fetch('/api/accounts/'+id).then(function(r){return r.json();});show(a);}
+  catch(e){console.error('Sel error:',e);}
+}
+function show(a){
+  document.getElementById('ne').style.display='none';
+  document.getElementById('vw').style.display='flex';
+  var i=all.findIndex(function(x){return x.id===a.id;});
+  var c=col(i<0?0:i);
+  var hv=document.getElementById('hv');hv.style.background=c[0];hv.style.color=c[1];hv.textContent=ini(a.name);
+  document.getElementById('hn').textContent=a.name;
+  var upd=a.lastUpdated?new Date(a.lastUpdated).toLocaleDateString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'Never';
+  var ai=0;
+  if(a.research){ai=[].concat((a.research.litigation||[]).filter(function(l){return!['Resolved','Settled','Dismissed'].includes(l.status);}),(a.research.regulatory||[]).filter(function(r){return!['Resolved','Closed'].includes(r.status);})).length;}
+  document.getElementById('hm').innerHTML=a.industry+' &middot; '+a.location+' &middot; '+(a.research?'<span class="bdg bg">Updated '+upd+'</span>':'<span class="bdg ba">Needs research</span>')+(ai>0?' &middot; <span class="bdg br">'+ai+' active issue'+(ai>1?'s':'')+'</span>':'');
+  var r=a.research||{};
+  var tbs=[{id:'contacts',l:'Contacts',n:(r.contacts||[]).length},{id:'openroles',l:'Open Roles',n:(r.open_roles||[]).length},{id:'tech',l:'Technology',n:(r.tech||[]).length},{id:'counsel',l:'Counsel',n:(r.counsel||[]).length},{id:'alsp',l:'ALSPs',n:(r.alsp||[]).length+(r.flex||[]).length},{id:'litigation',l:'Litigation',n:(r.litigation||[]).length},{id:'regulatory',l:'Regulatory',n:(r.regulatory||[]).length},{id:'financial',l:'Financial Intel',n:null},{id:'triggers',l:'Sales Triggers',n:(r.sales_triggers||[]).length},{id:'outreach',l:'Outreach',n:null}];
+  document.getElementById('tabs').innerHTML=tbs.map(function(t){return '<div class="tab'+(t.id===atab?' active':'')+'" onclick="stab(\''+t.id+'\',this)">'+t.l+(t.n!==null?'<span class="tct">'+t.n+'</span>':'')+'</div>';}).join('');
+  rtab(atab,a);
+}
+function stab(t,el){atab=t;document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('active');});if(el)el.classList.add('active');fetch('/api/accounts/'+aid).then(function(r){return r.json();}).then(function(a){rtab(t,a);});}
+function rtab(tab,a){
+  var c=document.getElementById('cnt');var r=a.research;
+  var i=all.findIndex(function(x){return x.id===a.id;});var cv=col(i<0?0:i);
+  if(!r){c.innerHTML=emp('No research data yet for '+a.name);return;}
+  if(tab==='contacts'){
+    if(!r.contacts||!r.contacts.length){c.innerHTML=emp('No contacts found');return;}
+    // Group contacts by department
+    var exec=r.contacts.filter(function(c){return ['CEO','CFO','COO','CISO'].includes(c.tag);});
+    var legal=r.contacts.filter(function(c){return !['CEO','CFO','COO','CISO'].includes(c.tag);});
+    var h=(r.intel_summary?ibox(r.intel_summary):'');
+    // Legal contacts first
+    if(legal.length){h+='<div class="sl">Legal department ('+legal.length+')</div><div class="cg">';}
+    var renderList=legal.length?legal:r.contacts;
+    renderList.forEach(function(ct){
+      h+='<div class="cc"><div class="cct"><div class="cav" style="background:'+cv[0]+';color:'+cv[1]+'">'+ini(ct.name)+'</div>';
+      h+='<div><div class="cn">'+ct.name+'</div><div class="ct2">'+ct.title+'</div></div></div>';
+      h+='<span class="tag '+tcls(ct.tag)+'">'+ct.tag+'</span>';
+      if(ct.confidence)h+=' <span class="'+ccls(ct.confidence)+'">'+ct.confidence+'</span>';
+      if(ct.email)h+='<div class="cd">@ '+ct.email+'</div>';
+      if(ct.linkedin)h+='<div class="cd"><a href="https://'+ct.linkedin+'" target="_blank">LinkedIn</a></div>';
+      if(ct.notes)h+='<div class="cd" style="font-style:italic;color:#9CA3AF">'+ct.notes+'</div>';
+      h+='</div>';
+    });
+    if(legal.length){h+='</div>';}
+    // Executive suite
+    if(exec.length){
+      h+='<div class="sl" style="margin-top:14px">Executive suite ('+exec.length+')</div><div class="cg">';
+      exec.forEach(function(ct){
+        h+='<div class="cc"><div class="cct"><div class="cav" style="background:'+cv[0]+';color:'+cv[1]+'">'+ini(ct.name)+'</div>';
+        h+='<div><div class="cn">'+ct.name+'</div><div class="ct2">'+ct.title+'</div></div></div>';
+        h+='<span class="tag '+tcls(ct.tag)+'">'+ct.tag+'</span>';
+        if(ct.confidence)h+=' <span class="'+ccls(ct.confidence)+'">'+ct.confidence+'</span>';
+        if(ct.linkedin)h+='<div class="cd"><a href="https://'+ct.linkedin+'" target="_blank">LinkedIn</a></div>';
+        h+='</div>';
+      });
+      h+='</div>';
+    }
+    c.innerHTML=h;
+  }else if(tab==='tech'){
+    c.innerHTML=(r.intel_summary?ibox(r.intel_summary):'')+
+      '<div class="sl">Legal technology stack</div>'+
+      '<div class="pr">'+(r.tech||[]).map(function(t){return '<span class="pill pbl">'+t+'</span>';}).join('')+'</div>';
+  }else if(tab==='counsel'){
+    if(!r.counsel||!r.counsel.length){c.innerHTML=emp('No outside counsel data');return;}
+    c.innerHTML='<div class="sl">Outside counsel</div>'+(r.counsel||[]).map(function(f){return '<div class="card" style="font-size:13px">'+f+'</div>';}).join('');
+  }else if(tab==='alsp'){
+    var ha=r.alsp&&r.alsp.length,hf=r.flex&&r.flex.length;
+    if(!ha&&!hf){c.innerHTML=emp('No ALSP or flex talent data');return;}
+    c.innerHTML=(ha?'<div class="sl">ALSP relationships</div><div class="pr">'+r.alsp.map(function(x){return '<span class="pill ptl">'+x+'</span>';}).join('')+'</div>':'')+
+      (hf?'<div class="sl">Flex talent</div><div class="pr">'+r.flex.map(function(x){return '<span class="pill ppu">'+x+'</span>';}).join('')+'</div>':'');
+  }else if(tab==='litigation'){
+    if(!r.litigation||!r.litigation.length){c.innerHTML=emp('No litigation data');return;}
+    var h='<div class="sl">Litigation ('+r.litigation.length+')</div>';
+    r.litigation.forEach(function(l){
+      h+='<div class="ir"><div class="irt"><span class="iti">'+l.type+(l.is_new?'<span class="nt">NEW</span>':'')+'</span>'+sbdg(l.status)+'</div>';
+      h+='<div class="ipe">'+l.period+'</div><div class="isu">'+l.summary+'</div>';
+      h+='<div class="ico">Outside counsel: <strong>'+(l.counsel||'Unknown')+'</strong></div></div>';
+    });
+    c.innerHTML=h;
+  }else if(tab==='regulatory'){
+    if(!r.regulatory||!r.regulatory.length){c.innerHTML=emp('No regulatory data');return;}
+    var h='<div class="sl">Regulatory ('+r.regulatory.length+')</div>';
+    r.regulatory.forEach(function(x){
+      h+='<div class="ir"><div class="irt"><span class="iti">'+x.type+(x.is_new?'<span class="nt">NEW</span>':'')+'</span>'+sbdg(x.status)+'</div>';
+      h+='<div class="ipe">'+x.period+'</div><div class="isu">'+x.summary+'</div>';
+      h+='<div class="ico">Outside counsel: <strong>'+(x.counsel||'Unknown')+'</strong></div></div>';
+    });
+    c.innerHTML=h;
+  }else if(tab==='financial'){
+    var fi=r.financial_intel;
+    if(!fi){c.innerHTML=emp('No financial intel yet');return;}
+    var h='<div class="sl">Financial intelligence</div>';
+    if(fi.latest_filing)h+='<div class="card"><div style="font-size:11px;font-weight:600;color:#9CA3AF;text-transform:uppercase;margin-bottom:4px">Latest filing</div><div style="font-size:13px">'+fi.latest_filing+'</div></div>';
+    if(fi.cost_initiatives)h+='<div class="card" style="border-left:3px solid #B45309"><div style="font-size:11px;font-weight:600;color:#B45309;text-transform:uppercase;margin-bottom:4px">Cost initiatives</div><div style="font-size:13px">'+fi.cost_initiatives+'</div></div>';
+    if(fi.earnings_signals)h+='<div class="card"><div style="font-size:11px;font-weight:600;color:#9CA3AF;text-transform:uppercase;margin-bottom:4px">Earnings signals</div><div style="font-size:13px">'+fi.earnings_signals+'</div></div>';
+    if(fi.legal_risk_factors)h+='<div class="card"><div style="font-size:11px;font-weight:600;color:#9CA3AF;text-transform:uppercase;margin-bottom:4px">Legal risk factors</div><div style="font-size:13px">'+fi.legal_risk_factors+'</div></div>';
+    if(fi.ma_activity)h+='<div class="card" style="border-left:3px solid #1E56A0"><div style="font-size:11px;font-weight:600;color:#1E56A0;text-transform:uppercase;margin-bottom:4px">M&A activity</div><div style="font-size:13px">'+fi.ma_activity+'</div></div>';
+    c.innerHTML=h;
+  }else if(tab==='openroles'){
+    var roles=r.open_roles||[];
+    if(!roles.length){
+      c.innerHTML='<div class="ep"><p>No open legal roles found</p><p style="font-size:12px;margin-top:6px;color:var(--g5)">Research this account to check for current job postings</p></div>';
+      return;
+    }
+    var roleSignals={
+      'contract':'ALSP contract review opportunity',
+      'ediscovery':'eDiscovery outsourcing signal',
+      'litigation':'Litigation support surge',
+      'legal ops':'Legal operations transformation',
+      'privacy':'Privacy program build-out',
+      'compliance':'Compliance program expansion',
+      'counsel':'In-house capacity gap',
+      'attorney':'Legal team scaling',
+      'paralegal':'Litigation or contract volume surge',
+    };
+    var h='<div class="sl">Open legal positions ('+roles.length+')</div>';
+    roles.forEach(function(role){
+      var sig='';
+      var titleLow=(role.title||'').toLowerCase();
+      Object.keys(roleSignals).forEach(function(k){if(titleLow.includes(k))sig=roleSignals[k];});
+      h+='<div style="background:#fff;border:1px solid var(--g2);border-left:3px solid #5B45C7;border-radius:var(--rl);padding:13px 16px;margin-bottom:8px">';
+      h+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">';
+      h+='<span style="font-size:13px;font-weight:600;color:var(--g9)">'+role.title+'</span>';
+      if(role.posted)h+='<span style="font-size:11px;color:var(--g4)">'+role.posted+'</span>';
+      if(role.location)h+='<span style="font-size:11px;background:var(--g1);color:var(--g6);padding:1px 7px;border-radius:10px">'+role.location+'</span>';
+      h+='</div>';
+      if(sig||role.signal)h+='<div style="font-size:12px;color:var(--teal)">&#8594; '+(role.signal||sig)+'</div>';
+      h+='</div>';
+    });
+    // Summary insight
+    var roleTypes=roles.map(function(r){return (r.title||'').toLowerCase();});
+    var hasEdiscovery=roleTypes.some(function(t){return t.includes('ediscovery')||t.includes('e-discovery');});
+    var hasOps=roleTypes.some(function(t){return t.includes('ops')||t.includes('operations');});
+    var hasLitigation=roleTypes.some(function(t){return t.includes('litigation')||t.includes('paralegal');});
+    var hasContract=roleTypes.some(function(t){return t.includes('contract')||t.includes('attorney');});
+    var insights=[];
+    if(hasEdiscovery)insights.push('eDiscovery hiring = likely evaluating vendors');
+    if(hasOps)insights.push('Legal ops hiring = transformation initiative underway');
+    if(hasLitigation)insights.push('Litigation hiring = document review surge');
+    if(hasContract)insights.push('Contract attorney hiring = contract volume overflow');
+    if(insights.length){
+      h+='<div style="background:linear-gradient(135deg,#FFF8E7,#FFFBF0);border:1px solid #FDE68A;border-radius:var(--rl);padding:12px 14px;margin-top:8px">';
+      h+='<div style="font-size:10px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">Sales signal</div>';
+      insights.forEach(function(i){h+='<div style="font-size:13px;color:var(--g7);margin-bottom:3px">&#8226; '+i+'</div>';});
+      h+='</div>';
+    }
+    c.innerHTML=h;
+    }else if(tab==='triggers'){
+    var imm=r.immediate_triggers||[];
+    var str=r.strategic_triggers||[];
+    var tr=r.sales_triggers||[];
+    var pc=r.personnel_changes||[];
+    var iq=r.intelligence_quality||'';
+    var id=r.intelligence_date||'';
+    var hasNew=imm.length||str.length;
+    var hasFallback=!hasNew&&tr.length;
+    if(!hasNew&&!hasFallback&&!pc.length){c.innerHTML=emp('No sales triggers yet');return;}
+    var h='';
+    // Quality badge
+    if(id){
+      var qcls=iq==='High'?'ch':iq==='Medium'?'cm':'cl';
+      h+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">';
+      h+='<span style="font-size:11px;color:var(--g5)">Intelligence as of: <strong>'+id+'</strong></span>';
+      if(iq)h+='<span class="'+qcls+'" style="font-size:11px">'+iq+' quality</span>';
+      h+='</div>';
+    }
+    // Immediate triggers
+    if(imm.length){
+      h+='<div class="sl">Immediate triggers — act this week ('+imm.length+')</div>';
+      imm.forEach(function(t){
+        var ucls=t.urgency==='Critical'?'br':t.urgency==='High'?'ba':'bb';
+        h+='<div style="background:#fff;border:1px solid var(--g2);border-left:3px solid '+(t.urgency==='Critical'?'#991B1B':t.urgency==='High'?'#B45309':'#1E56A0')+';border-radius:var(--rl);padding:12px;margin-bottom:8px">';
+        h+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">';
+        h+='<span class="bdg '+ucls+'">'+t.urgency+'</span>';
+        h+='<span style="font-size:11px;color:var(--g4)">'+t.date+'</span>';
+        h+='</div>';
+        h+='<div style="font-size:13px;font-weight:500;color:var(--g9);margin-bottom:5px">'+t.trigger+'</div>';
+        h+='<div style="font-size:12px;color:var(--teal)">&#8594; '+t.sales_implication+'</div>';
+        h+='</div>';
+      });
+    }
+    // Strategic triggers
+    if(str.length){
+      h+='<div class="sl" style="margin-top:'+(imm.length?'16':'0')+'px">Strategic trends — shape your approach ('+str.length+')</div>';
+      str.forEach(function(t){
+        h+='<div style="background:#fff;border:1px solid var(--g2);border-left:3px solid #5B45C7;border-radius:var(--rl);padding:12px;margin-bottom:8px">';
+        h+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">';
+        h+='<span class="bdg" style="background:#F0EEFE;color:#5B45C7">Strategic</span>';
+        h+='<span style="font-size:11px;color:var(--g4)">'+t.timeframe+'</span>';
+        if(t.angle)h+='<span style="font-size:11px;color:var(--g5);background:var(--g1);padding:1px 7px;border-radius:10px">'+t.angle+'</span>';
+        h+='</div>';
+        h+='<div style="font-size:13px;font-weight:500;color:var(--g9);margin-bottom:5px">'+t.trigger+'</div>';
+        h+='<div style="font-size:12px;color:var(--teal)">&#8594; '+t.sales_implication+'</div>';
+        h+='</div>';
+      });
+    }
+    // Fallback: old flat triggers
+    if(hasFallback&&!hasNew){
+      h+='<div class="sl">Sales triggers</div>';
+      tr.forEach(function(t){h+='<div class="trg">'+t+'</div>';});
+    }
+    // Personnel changes
+    if(pc.length){
+      h+='<div class="sl" style="margin-top:16px">Personnel changes</div>';
+      pc.forEach(function(p){h+='<div class="card"><div style="font-size:13px;font-weight:600;margin-bottom:3px">'+p.name+'</div><div style="font-size:12px;color:#6B7280;margin-bottom:5px">'+p.change+'</div><div style="font-size:12px;color:#0A7C6E">'+p.significance+'</div></div>';});
+    }
+    c.innerHTML=h;
+  }else if(tab==='outreach'){
+    c.innerHTML='<div style="padding:20px;color:#9CA3AF;font-size:13px">Loading...</div>';
+    fetch('/api/digest').then(function(r){return r.json();}).then(function(d){
+      if(d.message){c.innerHTML=emp('No weekly digest yet');return;}
+      var p=(d.priority_accounts||[]).find(function(x){return x.account_name&&x.account_name.toLowerCase().includes(a.name.toLowerCase());});
+      var q=(d.quick_touches||[]).find(function(x){return x.account_name&&x.account_name.toLowerCase().includes(a.name.toLowerCase());});
+      var h='';
+      if(d.week_summary)h+='<div class="ib"><div class="il">This week</div><div class="it">'+d.week_summary+'</div></div>';
+      if(p){
+        var uc=p.urgency==='Critical'?'br':p.urgency==='High'?'ba':'bb';
+        h+='<div class="sl">Priority outreach</div><div class="card">';
+        h+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span style="width:22px;height:22px;border-radius:50%;background:#0F2240;color:#fff;font-size:10px;font-weight:700;display:inline-flex;align-items:center;justify-content:center">'+p.priority_rank+'</span><strong>'+p.account_name+'</strong><span class="bdg '+uc+'">'+(p.urgency||'')+'</span></div>';
+        h+='<p style="font-size:12px;color:#6B7280;margin-bottom:8px">'+p.trigger+'</p>';
+        if(p.email)h+='<div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:10px;font-size:12px;line-height:1.7"><strong>Subject: '+p.email.subject+'</strong><br><br>'+p.email.body.replace(/\n/g,'<br>')+'</div>';
+        h+='</div>';
+      }else{
+        h+='<div class="ep"><p>'+a.name+' not in this week top priorities</p></div>';
+      }
+      if(q)h+='<div class="sl" style="margin-top:12px">Quick touch</div><div class="card" style="font-size:13px">'+q.action+'</div>';
+      c.innerHTML=h;
+    });
+  }
+}
+init();
+</script>
+</body>
+</html>

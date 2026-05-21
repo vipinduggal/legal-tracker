@@ -1,0 +1,34 @@
+{
+  "name": "legal-account-tracker",
+  "version": "1.0.0",
+  "description": "Automated legal intelligence tracker for sales \u2014 daily research, Outlook notifications, weekly outreach digests",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "research:all": "node src/jobs/researchAll.js",
+    "research:account": "node src/jobs/researchOne.js",
+    "digest:weekly": "node src/jobs/weeklyDigest.js",
+    "setup": "node scripts/setup.js",
+    "fix:contact": "node scripts/fixContact.js",
+    "verify:contacts": "node -e \"import('./src/db.js').then(async ({initDb,getAllResearch,setResearch})=>{await initDb();const r=await getAllResearch();const low=Object.entries(r).filter(([k,v])=>(v.contacts||[]).some(c=>c.confidence==='Low'||!c.verifiedAt));console.log('Accounts with unverified contacts:',low.map(([k])=>k).join(', '));})\"",
+    "cleanup:db": "node scripts/cleanupDb.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.24.0",
+    "node-cron": "^3.0.3",
+    "nodemailer": "^6.9.13",
+    "express": "^4.19.2",
+    "dotenv": "^16.4.5",
+    "winston": "^3.13.0",
+    "axios": "^1.7.2",
+    "lowdb": "^7.0.1",
+    "date-fns": "^3.6.0",
+    "p-limit": "^5.0.0",
+    "chalk": "^5.3.0"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
