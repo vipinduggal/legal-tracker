@@ -8,7 +8,7 @@ import { fileURLToPath } from 'url';
 import { mkdirSync } from 'fs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const DATA_DIR = process.env.RAILWAY_ENVIRONMENT ? '/data' : join(__dirname, '..', 'data');
+const DATA_DIR = process.env.RAILWAY_VOLUME_MOUNT_PATH || (process.env.RAILWAY_ENVIRONMENT ? '/tmp' : join(__dirname, '..', 'data'));
 
 mkdirSync(DATA_DIR, { recursive: true });
 
