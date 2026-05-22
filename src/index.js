@@ -10,15 +10,16 @@ import { runFilingsMonitor } from './jobs/filingsMonitor.js';
 import { runWeeklyDigest } from './jobs/weeklyDigest.js';
 import { logger } from './logger.js';
 
+// Start web server FIRST before anything else
+// Railway health check fires immediately — server must be ready
+startServer();
+
 async function main() {
   logger.info('Starting Legal Account Tracker...');
 
   // Initialize database
   await initDb();
   logger.info('Database initialized');
-
-  // Start web server
-  startServer();
 
   // ── Cron: Daily research (default: 7:00 AM every day) ──
   const researchCron = process.env.RESEARCH_CRON || '0 7 * * *';
