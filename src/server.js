@@ -1,9 +1,24 @@
 import express from 'express';
-import { ACCOUNTS } from '../config/accounts.js';
+import { ACCOUNTS as ACCOUNTS_STATIC } from '../config/accounts.js';
+function getAccounts() {
+  try {
+    const content = readFileSync(join(__dir, '..', 'config', 'accounts.js'), 'utf8');
+    const match = content.match(/export const ACCOUNTS\s*=\s*(\[[\s\S]*?\]);/);
+    if (!match) return ACCOUNTS_STATIC;
+    const cleaned = match[1]
+      .replace(/\/\/[^\n]*/g, '')
+      .replace(/([{,]\s*)([a-zA-Z_][a-zA-Z0-9_]*)\s*:/g, '$1"$2":')
+      .replace(/'/g, '"')
+      .trim();
+    const parsed = JSON.parse(cleaned);
+    return parsed.length ? parsed : ACCOUNTS_STATIC;
+  } catch(e) {
+    return ACCOUNTS_STATIC;
+  }
+}
 import { getAllResearch, getLatestDigest, db } from './db.js';
 import { logger } from './logger.js';
 import { registerAccountRoutes } from './accountRoutes.js';
-import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -17,6 +32,7 @@ app.get('/healthz', (req, res) => res.status(200).json({ status: 'ok' }));
 
 app.get('/api/accounts', async (req, res) => {
   const allResearch = await getAllResearch();
+  const ACCOUNTS = getAccounts();
   const data = ACCOUNTS.map(a => ({
     ...a,
     hasData: !!allResearch[a.id],
@@ -31,7 +47,7 @@ app.get('/api/accounts', async (req, res) => {
 });
 
 app.get('/api/accounts/:id', async (req, res) => {
-  const account = ACCOUNTS.find(a => a.id === req.params.id);
+  const account = getAccounts().find(a => a.id === req.params.id);
   if (!account) return res.status(404).json({ error: 'Not found' });
   const allResearch = await getAllResearch();
   res.json({ ...account, lastUpdated: db.data.lastUpdated?.[account.id] || null, research: allResearch[account.id] || null });
@@ -46,7 +62,8 @@ app.get('/api/status', async (req, res) => {
   await db.read();
   const allResearch = await getAllResearch();
   const researched = Object.keys(allResearch).length;
-  res.json({ status: 'ok', accounts: ACCOUNTS.length, researched, pending: ACCOUNTS.length - researched, recentRuns: (db.data.runs || []).slice(0, 5) });
+  const ACCOUNTS_NOW = getAccounts();
+  res.json({ status: 'ok', accounts: ACCOUNTS_NOW.length, researched, pending: ACCOUNTS.length - researched, recentRuns: (db.data.runs || []).slice(0, 5) });
 });
 
 registerAccountRoutes(app);
