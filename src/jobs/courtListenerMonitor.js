@@ -23,41 +23,149 @@ function clHeaders() {
   return { "Authorization": `Token ${CL_TOKEN}` };
 }
 
-// Determine which attorneys represent the defendant (our account)
-function extractDefenseCounsel(attorneys, firms, parties, companyName) {
-  if (!attorneys?.length && !firms?.length) return null;
+// Known plaintiff-side litigation firms — they represent plaintiffs not corporate defendants
+const PLAINTIFF_FIRMS = [
+  // Securities/class action plaintiff firms
+  "lieff cabraser", "milberg", "hagens berman", "girard sharp",
+  "susman godfrey", "bernstein litowitz", "labaton", "keller rohrback",
+  "scott+scott", "cohen milstein", "robbins geller", "wolf popper",
+  "pomerantz", "kaplan fox", "glancy prongay", "levi & korsinsky",
+  "bleichmar fonti", "grant & eisenhofer", "simmons hanly", "motley rice",
+  "weitz & luxenberg", "seeger weiss", "levin papantonio", "morgan & morgan",
+  "consumer attorneys", "laffey leitner", "beasley allen", "rosen law",
+  "karpf karpf", "the rosen law", "chimicles", "faruqi", "bronstein",
+  "wolf haldenstein", "saxena white", "bottini & bottini",
+  // Copyright/IP plaintiff firms  
+  "tousley", "cowan debaets", "hartline barger", "copyright",
+  // Employment plaintiff firms
+  "hawks quindel", "bryan schwartz", "outten & golden", "sanford heisler",
+  "nichols kaster", "joseph & kirschenbaum", "virginia employment",
+  "mixon law", "karpf", "consumer law",
+  // Consumer/fraud plaintiff firms
+  "doyle lowther", "blood hurst", "capstone law", "callahan & blaine",
+  "stevenson & keppelman", "siri glimstad",
+  // Mass tort plaintiff firms
+  "arnold & itkin", "napoli shkolnik",
+];
 
-  const companyWords = companyName.toLowerCase().split(" ").filter(w => w.length > 3);
+// Known BigLaw defense firms — these almost always represent corporations
+const BIGLAW_DEFENSE = [
+  "orrick", "perkins coie", "davis wright", "dechert", "kirkland",
+  "paul weiss", "sullivan & cromwell", "skadden", "latham", "gibson dunn",
+  "sidley austin", "jones day", "mayer brown", "willkie farr", "cooley",
+  "wilson sonsini", "fenwick", "morrison & foerster", "covington",
+  "hogan lovells", "white & case", "cleary gottlieb", "paul hastings",
+  "fish & richardson", "quinn emanuel", "irell & manella", "weil gotshal",
+  "simpson thacher", "debevoise", "cahill gordon", "cravath",
+  "milbank", "shearman", "freshfields", "linklaters", "allen & overy",
+];
 
-  // Find defense counsel by identifying which firms appear alongside the company
-  // Filter out pro se litigants (people representing themselves — same name appears in both attorneys and parties)
+function isDefenseFirm(firmName) {
+  if (!firmName) return false;
+  const lower = firmName.toLowerCase();
+  return BIGLAW_DEFENSE.some(df => lower.includes(df));
+}
+
+function isPlaintiffFirm(firmName) {
+  if (!firmName) return false;
+  const lower = firmName.toLowerCase();
+  return PLAINTIFF_FIRMS.some(pf => lower.includes(pf));
+}
+
+function isValidFirm(firmName, partyNames) {
+  if (!firmName || firmName.length < 5 || firmName.length > 80) return false;
+  if (partyNames.has(firmName.toLowerCase().trim())) return false; // pro se
+  if (/^\d/.test(firmName)) return false; // starts with number
+  if (firmName.toLowerCase().includes('direct:')) return false; // phone
+  if (firmName.toLowerCase().includes('e-filing')) return false;
+  return true;
+}
+
+function isValidAttorney(name, partyNames) {
+  if (!name || name.length < 4 || name.length > 60) return false;
+  if (partyNames.has(name.toLowerCase().trim())) return false;
+  if (name.toLowerCase().includes('e-filing')) return false;
+  if (/^\d/.test(name)) return false;
+  if (name.toLowerCase().includes('direct:')) return false;
+  const words = name.trim().split(/\s+/);
+  if (words.length < 2) return false; // need first + last name
+  return true;
+}
+
+// Extract counsel and correctly identify plaintiff vs defense firms
+function extractDefenseCounsel(attorneys, firms, parties, companyName, companyIsDefendant = true) {
   const partyNames = new Set((parties || []).map(p => p.toLowerCase().trim()));
 
-  const validFirms = (firms || []).filter(f => {
-    if (!f || f.length < 5) return false;
-    // Skip if firm name matches a party (pro se)
-    if (partyNames.has(f.toLowerCase().trim())) return false;
-    // Skip obvious non-firms
-    if (f.match(/^[A-Z][a-z]+ [A-Z][a-z]+$/) && !f.includes("LLP") && !f.includes("LLC") && !f.includes("PC")) {
-      // Might be a person's name — check if it's in attorneys list too
-      return false;
+  const validFirms = (firms || []).filter(f => isValidFirm(f, partyNames));
+  const validAttorneys = (attorneys || []).filter(a => isValidAttorney(a, partyNames));
+
+  // Match attorneys to their firms using index position
+  // CourtListener returns attorneys and firms as parallel arrays
+  // attorney[i] is associated with firm[i]
+  const attorneyFirmMap = {};
+  const rawFirms = firms || [];
+  const rawAttorneys = attorneys || [];
+  for (let i = 0; i < rawAttorneys.length; i++) {
+    const atty = rawAttorneys[i];
+    const firm = rawFirms[i] || rawFirms[0] || null;
+    if (atty && firm) {
+      if (!attorneyFirmMap[firm]) attorneyFirmMap[firm] = [];
+      attorneyFirmMap[firm].push(atty);
     }
-    return true;
-  });
+  }
 
-  const validAttorneys = (attorneys || []).filter(a => {
-    if (!a || a.length < 3) return false;
-    // Skip if attorney name matches a party (pro se)
-    if (partyNames.has(a.toLowerCase().trim())) return false;
-    return true;
-  });
+  // Separate firms into three buckets:
+  // 1. Known defense/BigLaw firms — show as defense counsel
+  // 2. Known plaintiff firms — label as plaintiff counsel
+  // 3. Unknown — could be either side
 
-  if (!validFirms.length && !validAttorneys.length) return null;
+  const knownDefenseFirms = validFirms.filter(f => isDefenseFirm(f));
+  const knownPlaintiffFirms = validFirms.filter(f => isPlaintiffFirm(f));
+  const unknownFirms = validFirms.filter(f => !isDefenseFirm(f) && !isPlaintiffFirm(f));
+
+  // Prefer known defense firms, fall back to unknown firms
+  const defenseFirms = knownDefenseFirms.length > 0
+    ? knownDefenseFirms
+    : unknownFirms; // unknown firms might be defense
+
+  const plaintiffFirms = knownPlaintiffFirms;
+  const primaryFirm = defenseFirms[0] || null;
+
+  // If company is plaintiff (suing someone), show their own counsel
+  if (!companyIsDefendant) {
+    return {
+      firms: defenseFirms.length ? defenseFirms.slice(0, 3) : validFirms.slice(0, 3),
+      attorneys: validAttorneys.slice(0, 4),
+      primary_firm: defenseFirms[0] || validFirms[0] || null,
+      plaintiff_firms: [],
+      counsel_role: "plaintiff",
+    };
+  }
+
+  // Company is defendant — show defense counsel, label plaintiff counsel separately
+  // Get attorneys specifically associated with the defense firm
+  let defenseAttorneys = [];
+  if (primaryFirm) {
+    // Try exact match first
+    defenseAttorneys = (attorneyFirmMap[primaryFirm] || []).filter(a => isValidAttorney(a, partyNames));
+    // If no match, try partial match
+    if (!defenseAttorneys.length) {
+      for (const [firm, attys] of Object.entries(attorneyFirmMap)) {
+        if (isDefenseFirm(firm) && !isPlaintiffFirm(firm)) {
+          defenseAttorneys = attys.filter(a => isValidAttorney(a, partyNames));
+          if (defenseAttorneys.length) break;
+        }
+      }
+    }
+  }
 
   return {
-    firms: validFirms.slice(0, 3),
-    attorneys: validAttorneys.slice(0, 4),
-    primary_firm: validFirms[0] || null,
+    firms: defenseFirms.slice(0, 3),
+    attorneys: defenseAttorneys.slice(0, 4),
+    primary_firm: primaryFirm,
+    plaintiff_firms: plaintiffFirms.slice(0, 2),
+    counsel_role: primaryFirm ? "defense" : (plaintiffFirms.length ? "plaintiff_only" : "unknown"),
+    company_is_defendant: true,
   };
 }
 
@@ -212,15 +320,33 @@ async function searchActiveCases(companyName) {
 
 // Build structured litigation item from CourtListener search result
 function buildLitItem(searchResult, companyName) {
+  // Determine if company is plaintiff or defendant from case name
+  const caseName = searchResult.caseName || "";
+  const vIndex = caseName.toLowerCase().indexOf(" v. ");
+  const companyFirst = companyName.toLowerCase().split(" ")[0];
+
+  let companyIsDefendant = true; // assume defendant by default
+  if (vIndex > -1) {
+    const afterV = caseName.slice(vIndex + 4).toLowerCase();
+    const beforeV = caseName.slice(0, vIndex).toLowerCase();
+    companyIsDefendant = afterV.includes(companyFirst); // company after "v." = defendant
+  }
+
   const counsel = extractDefenseCounsel(
     searchResult.attorney,
     searchResult.firm,
     searchResult.party,
-    companyName
+    companyName,
+    companyIsDefendant
   );
 
   const nosDesc = getNOSDescription(searchResult.suitNature);
   const isHigh = isHighValueCase(searchResult.suitNature);
+
+  const hasDefense = !!(counsel?.primary_firm);
+  const counselNote = !hasDefense && counsel?.plaintiff_firms?.length
+    ? `Plaintiff counsel identified (${counsel.plaintiff_firms[0]}) — defense counsel not yet confirmed in court records`
+    : (!hasDefense ? "Defense counsel not yet confirmed in court records" : null);
 
   return {
     case_name: searchResult.caseName,
@@ -230,10 +356,13 @@ function buildLitItem(searchResult, companyName) {
     period: (searchResult.dateFiled || "").slice(0, 7) + " to present",
     summary: `${searchResult.caseName} — ${searchResult.cause || nosDesc || "Federal case"} — Filed ${searchResult.dateFiled || "recently"} in ${(searchResult.court_id || "").toUpperCase()}`,
     status: "Pending",
-    outside_counsel_firm: counsel?.primary_firm || null,
+    outside_counsel_firm: hasDefense ? counsel.primary_firm : null,
     all_counsel_firms: counsel?.firms || [],
-    lead_partners: counsel?.attorneys || [],
-    counsel_verified: !!(counsel?.primary_firm),
+    lead_partners: hasDefense ? (counsel?.attorneys || []) : [],
+    plaintiff_counsel: counsel?.plaintiff_firms || [],
+    counsel_verified: hasDefense,
+    counsel_role: counsel?.counsel_role || "unknown",
+    counsel_note: counselNote,
     courtlistener_verified: true,
     courtlistener_id: searchResult.docket_id,
     suit_nature: searchResult.suitNature,
@@ -288,6 +417,10 @@ export async function runCourtListenerMonitor(accountId) {
       let updatedCases = 0;
 
       for (const searchCase of cases) {
+        // Skip cases with no meaningful identifiers
+        if (!searchCase.caseName || !searchCase.docketNumber) continue;
+        if (searchCase.caseName === "Unknown" || searchCase.docketNumber === "Unknown") continue;
+
         const caseNum = (searchCase.docketNumber || "").toLowerCase();
         const caseName = (searchCase.caseName || "").toLowerCase();
 
