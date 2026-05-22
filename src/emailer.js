@@ -1,305 +1,136 @@
-// emailer.js — Sends Outlook notifications via SMTP
+// emailer.js
+// Sends email via SendGrid API (works on DigitalOcean — no SMTP port blocking)
+// Falls back to Gmail SMTP if SENDGRID_API_KEY not set (for local Mac)
 
-import nodemailer from 'nodemailer';
-import { logger } from './logger.js';
-import { format } from 'date-fns';
+import { logger } from "./logger.js";
 
-let transporter = null;
+const SENDGRID_KEY = process.env.SENDGRID_API_KEY;
+const EMAIL_TO = process.env.EMAIL_TO || process.env.EMAIL_USER;
+const EMAIL_FROM = process.env.EMAIL_FROM || process.env.EMAIL_USER || "noreply@nazar-ai.com";
 
-function getTransporter() {
-  if (transporter) return transporter;
-  transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST || 'smtp.office365.com',
-    port: parseInt(process.env.EMAIL_PORT) || 587,
-    secure: false,
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
+async function sendViaSendGrid(to, subject, html) {
+  const response = await fetch("https://api.sendgrid.com/v3/mail/send", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${SENDGRID_KEY}`,
+      "Content-Type": "application/json",
     },
-    tls: { ciphers: 'SSLv3' },
+    body: JSON.stringify({
+      personalizations: [{ to: [{ email: to }] }],
+      from: { email: EMAIL_FROM, name: "Legal Account Tracker" },
+      subject,
+      content: [{ type: "text/html", value: html }],
+    }),
   });
-  return transporter;
+  if (!response.ok) {
+    const err = await response.text();
+    throw new Error(`SendGrid error ${response.status}: ${err}`);
+  }
+  return true;
 }
 
-/**
- * Send a notification when a single account has been updated.
- */
-export async function sendAccountUpdateEmail(account, changes, researchData) {
-  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-    logger.warn('Email not configured — skipping account update notification');
+async function sendViaGmail(to, subject, html) {
+  const nodemailer = (await import("nodemailer")).default;
+  const transporter = nodemailer.createTransport({
+    host: process.env.EMAIL_HOST || "smtp.gmail.com",
+    port: 587,
+    secure: false,
+    auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+  });
+  await transporter.sendMail({ from: process.env.EMAIL_USER, to, subject, html });
+  return true;
+}
+
+export async function sendEmail(to, subject, html) {
+  const recipient = to || EMAIL_TO;
+  if (!recipient) { logger.warn("No email recipient configured"); return false; }
+  try {
+    if (SENDGRID_KEY) {
+      await sendViaSendGrid(recipient, subject, html);
+      logger.info(`Email sent via SendGrid to ${recipient}: ${subject}`);
+    } else {
+      await sendViaGmail(recipient, subject, html);
+      logger.info(`Email sent via Gmail to ${recipient}: ${subject}`);
+    }
+    return true;
+  } catch(err) {
+    logger.error(`Email failed`, { error: err.message });
     return false;
   }
+}
 
-  const date = format(new Date(), 'MMMM d, yyyy');
-  const activeIssues = [
-    ...(researchData.litigation || []).filter(l => l.status !== 'Resolved' && l.status !== 'Settled'),
-    ...(researchData.regulatory || []).filter(r => r.status !== 'Resolved' && r.status !== 'Closed'),
-  ];
-
-  const html = `
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8">
-<style>
-  body { font-family: Segoe UI, Arial, sans-serif; font-size: 14px; color: #333; margin: 0; padding: 0; background: #f5f5f5; }
-  .container { max-width: 600px; margin: 24px auto; background: white; border-radius: 8px; overflow: hidden; border: 1px solid #e0e0e0; }
-  .header { background: #0078d4; color: white; padding: 20px 24px; }
-  .header h1 { font-size: 18px; font-weight: 600; margin: 0 0 4px; }
-  .header p { font-size: 13px; opacity: 0.85; margin: 0; }
-  .body { padding: 20px 24px; }
-  .change-list { background: #f0f7ff; border-left: 3px solid #0078d4; padding: 10px 14px; border-radius: 0 4px 4px 0; margin: 12px 0; }
-  .change-list ul { margin: 0; padding-left: 16px; }
-  .change-list li { font-size: 13px; margin: 4px 0; color: #1a1a1a; }
-  .section { margin: 16px 0; }
-  .section h3 { font-size: 13px; font-weight: 600; color: #555; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
-  .contact-row { display: flex; gap: 8px; align-items: baseline; padding: 4px 0; border-bottom: 1px solid #f0f0f0; }
-  .tag { font-size: 11px; padding: 1px 6px; border-radius: 10px; background: #e8f0fe; color: #1a73e8; font-weight: 500; }
-  .pill-amber { background: #fef3e2; color: #b45309; }
-  .pill-red { background: #fee2e2; color: #991b1b; }
-  .intel-box { background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; padding: 12px; margin-top: 12px; font-size: 13px; line-height: 1.6; }
-  .footer { padding: 12px 24px; background: #f9f9f9; font-size: 11px; color: #888; border-top: 1px solid #eee; }
-  .cta { display: inline-block; margin-top: 14px; padding: 8px 16px; background: #0078d4; color: white; border-radius: 4px; text-decoration: none; font-size: 13px; font-weight: 500; }
-</style>
-</head>
-<body>
-<div class="container">
-  <div class="header">
-    <h1>📋 ${account.name} — Research Updated</h1>
-    <p>${date} · Legal Account Tracker</p>
-  </div>
-  <div class="body">
-    <p style="font-size:14px;margin-bottom:12px">Research has been refreshed for <strong>${account.name}</strong> (${account.industry}).</p>
-
-    <div class="change-list">
-      <strong style="font-size:12px;color:#0078d4">WHAT CHANGED</strong>
-      <ul>
-        ${changes.map(c => `<li>${c}</li>`).join('')}
-      </ul>
+export async function sendAccountNotification(account, changes, researchData) {
+  const subject = `[Nazar] ${account.name} — ${changes.length} update(s)`;
+  const html = `<div style="font-family:Arial,sans-serif;max-width:600px">
+    <div style="background:#1B3A5C;padding:20px;border-radius:8px 8px 0 0">
+      <h2 style="color:white;margin:0">${account.name}</h2>
+      <p style="color:#aaa;margin:4px 0 0">${account.industry} · ${account.location}</p>
     </div>
-
-    ${researchData.contacts?.length ? `
-    <div class="section">
-      <h3>Key contacts (${researchData.contacts.length})</h3>
-      ${researchData.contacts.slice(0, 5).map(c => `
-        <div class="contact-row">
-          <span class="tag">${c.tag}</span>
-          <strong style="font-size:13px">${c.name}</strong>
-          <span style="font-size:12px;color:#666">${c.title}</span>
-        </div>`).join('')}
-    </div>` : ''}
-
-    ${activeIssues.length ? `
-    <div class="section">
-      <h3>Active legal issues (${activeIssues.length})</h3>
-      ${activeIssues.slice(0, 4).map(i => `
-        <div style="padding:6px 0;border-bottom:1px solid #f0f0f0;font-size:13px">
-          <span class="tag pill-amber">${i.status}</span>
-          <strong style="margin-left:6px">${i.type}</strong>
-          ${i.counsel ? `<span style="color:#666;font-size:12px"> · ${i.counsel}</span>` : ''}
-        </div>`).join('')}
-    </div>` : ''}
-
-    ${researchData.intel_summary ? `
-    <div class="intel-box">
-      <strong style="font-size:12px;color:#92400e">💡 SALES INTEL</strong><br>
-      ${researchData.intel_summary}
-    </div>` : ''}
-  </div>
-  <div class="footer">
-    Legal Account Tracker · Automated daily research · Reply to this email with any corrections
-  </div>
-</div>
-</body>
-</html>`;
-
-  try {
-    await getTransporter().sendMail({
-      from: `"Legal Tracker" <${process.env.EMAIL_FROM}>`,
-      to: process.env.EMAIL_TO,
-      subject: `[Tracker] ${account.name} updated — ${changes[0]}`,
-      html,
-    });
-    logger.info(`Email sent for ${account.name}`);
-    return true;
-  } catch (err) {
-    logger.error(`Email failed for ${account.name}`, { error: err.message });
-    return false;
-  }
+    <div style="background:#f8f9fa;padding:20px;border-radius:0 0 8px 8px">
+      <h3 style="color:#1B3A5C">What changed:</h3>
+      <ul>${changes.map(c => `<li>${c}</li>`).join("")}</ul>
+      ${researchData?.intel_summary ? `<p style="color:#555;font-style:italic">${researchData.intel_summary}</p>` : ""}
+      <p><a href="https://nazar-ai.com" style="background:#2563A8;color:white;padding:10px 20px;border-radius:6px;text-decoration:none">View Dashboard</a></p>
+    </div>
+  </div>`;
+  return sendEmail(EMAIL_TO, subject, html);
 }
 
-/**
- * Send the weekly outreach digest email.
- */
-export async function sendWeeklyDigestEmail(digest) {
-  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-    logger.warn('Email not configured — skipping digest');
-    return false;
-  }
-
-  const date = format(new Date(), 'MMMM d, yyyy');
-  const priorities = digest.priority_accounts || [];
-  const quick = digest.quick_touches || [];
-
-  const html = `
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8">
-<style>
-  body { font-family: Segoe UI, Arial, sans-serif; font-size: 14px; color: #333; margin: 0; padding: 0; background: #f5f5f5; }
-  .container { max-width: 650px; margin: 24px auto; background: white; border-radius: 8px; overflow: hidden; border: 1px solid #e0e0e0; }
-  .header { background: #107c10; color: white; padding: 20px 24px; }
-  .header h1 { font-size: 18px; font-weight: 600; margin: 0 0 4px; }
-  .header p { font-size: 13px; opacity: 0.85; margin: 0; }
-  .body { padding: 20px 24px; }
-  .week-summary { background: #f0fdf4; border-left: 3px solid #107c10; padding: 10px 14px; border-radius: 0 4px 4px 0; margin-bottom: 20px; font-size: 13px; line-height: 1.6; }
-  .account-card { border: 1px solid #e8e8e8; border-radius: 8px; padding: 16px; margin-bottom: 14px; }
-  .account-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
-  .rank-badge { width: 24px; height: 24px; border-radius: 50%; background: #107c10; color: white; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; float: left; margin-right: 8px; }
-  .account-name { font-size: 15px; font-weight: 600; }
-  .reason-text { font-size: 12px; color: #555; margin-bottom: 10px; line-height: 1.5; padding-left: 32px; }
-  .contact-chip { display: inline-block; background: #e8f0fe; color: #1a73e8; border-radius: 4px; padding: 2px 8px; font-size: 12px; margin-bottom: 8px; }
-  .talking-point { font-size: 13px; font-style: italic; color: #444; background: #fafafa; border: 1px solid #eee; border-radius: 4px; padding: 8px 10px; margin-bottom: 10px; }
-  .email-block { background: #f8f8f8; border-radius: 6px; padding: 12px; font-size: 12px; line-height: 1.6; border: 1px solid #eee; }
-  .email-subject { font-weight: 600; font-size: 13px; margin-bottom: 6px; color: #000; }
-  .quick-list { background: #fff8e1; border-radius: 6px; padding: 12px 16px; }
-  .quick-list li { font-size: 13px; margin: 5px 0; }
-  .section-title { font-size: 12px; font-weight: 700; color: #666; text-transform: uppercase; letter-spacing: 0.05em; margin: 20px 0 10px; border-bottom: 1px solid #eee; padding-bottom: 6px; }
-  .footer { padding: 12px 24px; background: #f9f9f9; font-size: 11px; color: #888; border-top: 1px solid #eee; }
-</style>
-</head>
-<body>
-<div class="container">
-  <div class="header">
-    <h1>📬 Weekly Outreach Digest</h1>
-    <p>Week of ${date} · Legal Account Tracker</p>
-  </div>
-  <div class="body">
-
-    ${digest.week_summary ? `
-    <div class="week-summary">
-      <strong style="font-size:11px;color:#166534;text-transform:uppercase;letter-spacing:.05em">This week's themes</strong><br>
-      ${digest.week_summary}
-    </div>` : ''}
-
-    <div class="section-title">Priority outreach — top ${priorities.length} accounts</div>
-
-    ${priorities.map((p, i) => `
-    <div class="account-card">
-      <div>
-        <span class="rank-badge" style="display:inline-flex;width:22px;height:22px;border-radius:50%;background:#107c10;color:white;font-size:11px;font-weight:700;align-items:center;justify-content:center;margin-right:8px">${i + 1}</span>
-        <strong class="account-name">${p.account_name}</strong>
-      </div>
-      <div class="reason-text">${p.reason}</div>
-      ${p.contact ? `<div><span class="contact-chip">→ ${p.contact.name} · ${p.contact.title}</span><span style="font-size:11px;color:#666;margin-left:6px">${p.contact.why_them}</span></div>` : ''}
-      ${p.talking_point ? `<div class="talking-point" style="margin-top:8px">"${p.talking_point}"</div>` : ''}
-      ${p.email ? `
-      <div class="email-block">
-        <div class="email-subject">Subject: ${p.email.subject}</div>
-        <div style="white-space:pre-line">${p.email.body}</div>
-      </div>` : ''}
-      ${p.linkedin_message ? `<div style="margin-top:8px;font-size:12px;color:#555"><strong>LinkedIn:</strong> ${p.linkedin_message}</div>` : ''}
-    </div>`).join('')}
-
-    ${quick.length ? `
-    <div class="section-title">Quick touches</div>
-    <div class="quick-list">
-      <ul style="margin:0;padding-left:16px">
-        ${quick.map(q => `<li><strong>${q.account_name}:</strong> ${q.action}</li>`).join('')}
-      </ul>
-    </div>` : ''}
-
-  </div>
-  <div class="footer">
-    Legal Account Tracker · Weekly digest every Monday · Auto-generated from daily research
-  </div>
-</div>
-</body>
-</html>`;
-
-  try {
-    await getTransporter().sendMail({
-      from: `"Legal Tracker" <${process.env.EMAIL_FROM}>`,
-      to: process.env.EMAIL_TO,
-      subject: `[Tracker] Weekly outreach digest — ${date} — ${priorities.length} priority accounts`,
-      html,
-    });
-    logger.info('Weekly digest email sent');
-    return true;
-  } catch (err) {
-    logger.error('Weekly digest email failed', { error: err.message });
-    return false;
-  }
+export async function sendWeeklyDigest(digestData) {
+  const subject = `[Nazar] Weekly Legal Intelligence Digest — ${new Date().toLocaleDateString("en-US", { month: "long", day: "numeric" })}`;
+  const priorityHtml = (digestData.priority_accounts || []).slice(0, 5).map(a => `
+    <div style="border:1px solid #e0e0e0;border-left:4px solid #2563A8;border-radius:6px;padding:14px;margin-bottom:12px">
+      <div style="font-weight:bold;color:#1B3A5C">${a.account_name} <span style="font-size:12px;background:#EBF3FB;color:#2563A8;padding:2px 8px;border-radius:10px">${a.urgency}</span></div>
+      <div style="color:#555;margin:6px 0;font-size:13px">${a.trigger}</div>
+      <div style="color:#0E7C6E;font-size:13px"><strong>Action:</strong> ${a.action}</div>
+    </div>`).join("");
+  const html = `<div style="font-family:Arial,sans-serif;max-width:600px">
+    <div style="background:#1B3A5C;padding:20px;border-radius:8px 8px 0 0">
+      <h2 style="color:white;margin:0">Weekly Legal Intelligence Digest</h2>
+      <p style="color:#aaa;margin:4px 0 0">${new Date().toLocaleDateString("en-US", { weekday:"long", year:"numeric", month:"long", day:"numeric" })}</p>
+    </div>
+    <div style="background:#f8f9fa;padding:20px;border-radius:0 0 8px 8px">
+      ${digestData.week_summary ? `<p style="color:#333;font-size:14px;line-height:1.6">${digestData.week_summary}</p>` : ""}
+      <h3 style="color:#1B3A5C">Priority accounts this week:</h3>
+      ${priorityHtml}
+      <p><a href="https://nazar-ai.com/digest" style="background:#2563A8;color:white;padding:10px 20px;border-radius:6px;text-decoration:none">View Full Digest</a></p>
+    </div>
+  </div>`;
+  return sendEmail(EMAIL_TO, subject, html);
 }
 
+export async function sendFilingsAlert(account, filings) {
+  const subject = `[Nazar] New filing: ${account.name}`;
+  const html = `<div style="font-family:Arial,sans-serif;max-width:600px">
+    <div style="background:#B45309;padding:20px;border-radius:8px 8px 0 0">
+      <h2 style="color:white;margin:0">New Filing Alert: ${account.name}</h2>
+    </div>
+    <div style="background:#f8f9fa;padding:20px;border-radius:0 0 8px 8px">
+      ${filings.map(f => `<div style="border:1px solid #FDE68A;background:#FFFBF0;border-radius:6px;padding:12px;margin-bottom:8px">
+        <div style="font-weight:bold;color:#B45309">${f.type} <span style="font-size:11px;color:#888">[${f.source}]</span></div>
+        <div style="color:#555;font-size:13px;margin-top:4px">${f.summary}</div>
+      </div>`).join("")}
+      <p><a href="https://nazar-ai.com" style="background:#B45309;color:white;padding:10px 20px;border-radius:6px;text-decoration:none">View Dashboard</a></p>
+    </div>
+  </div>`;
+  return sendEmail(EMAIL_TO, subject, html);
+}
 
-/**
- * Send an immediate alert when new filings are detected.
- */
-export async function sendFilingsAlertEmail(account, newFilings) {
-  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-    return false;
-  }
-
-  const date = new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
-
-  const html = `
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8">
-<style>
-  body{font-family:Segoe UI,Arial,sans-serif;font-size:14px;color:#333;margin:0;padding:0;background:#f5f5f5}
-  .container{max-width:600px;margin:24px auto;background:white;border-radius:8px;overflow:hidden;border:1px solid #e0e0e0}
-  .header{background:#991B1B;color:white;padding:20px 24px}
-  .header h1{font-size:18px;font-weight:600;margin:0 0 4px}
-  .header p{font-size:13px;opacity:.85;margin:0}
-  .body{padding:20px 24px}
-  .filing-card{border:1px solid #FEE2E2;border-left:4px solid #991B1B;border-radius:4px;padding:12px;margin:10px 0;background:#FFF5F5}
-  .filing-type{font-size:14px;font-weight:600;color:#991B1B;margin-bottom:4px}
-  .filing-summary{font-size:13px;color:#333;margin-bottom:8px;line-height:1.5}
-  .action-box{background:#FEF3C7;border:1px solid #FDE68A;border-radius:4px;padding:10px;font-size:13px;color:#92400E}
-  .action-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;color:#B45309}
-  .footer{padding:12px 24px;background:#f9f9f9;font-size:11px;color:#888;border-top:1px solid #eee}
-</style>
-</head>
-<body>
-<div class="container">
-  <div class="header">
-    <h1>🚨 New Filing Alert — ${account.name}</h1>
-    <p>${date} · Legal Account Tracker · Immediate notification</p>
-  </div>
-  <div class="body">
-    <p style="margin-bottom:14px;font-size:14px">${newFilings.length} new filing${newFilings.length > 1 ? "s" : ""} detected for <strong>${account.name}</strong> (${account.industry}) in the last 30 days.</p>
-    ${newFilings.map(f => `
-    <div class="filing-card">
-      <div class="filing-type">${f.type}</div>
-      <div class="filing-summary">${f.summary}</div>
-      ${f.counsel ? `<div style="font-size:12px;color:#666;margin-bottom:8px">Outside counsel: <strong>${f.counsel}</strong></div>` : ""}
-      ${f.suggested_action ? `
-      <div class="action-box">
-        <div class="action-label">💡 Suggested action this week</div>
-        ${f.suggested_action}
-      </div>` : ""}
-    </div>`).join("")}
-  </div>
-  <div class="footer">Legal Account Tracker · New filing alerts · Automated daily monitoring</div>
-</div>
-</body>
-</html>`;
-
-  try {
-    await getTransporter().sendMail({
-      from: `"Legal Tracker" <${process.env.EMAIL_FROM}>`,
-      to: process.env.EMAIL_TO,
-      subject: `[ALERT] New filing — ${account.name}: ${newFilings[0]?.type}`,
-      html,
-    });
-    logger.info("Filing alert email sent for " + account.name);
-    return true;
-  } catch (err) {
-    logger.error("Filing alert email failed for " + account.name, { error: err.message });
-    return false;
-  }
+export async function sendLitigationAlertEmail(alerts) {
+  const subject = `[Nazar] Discovery phase alert — ${alerts.length} case(s)`;
+  const html = `<div style="font-family:Arial,sans-serif;max-width:600px">
+    <div style="background:#DC2626;padding:20px;border-radius:8px 8px 0 0">
+      <h2 style="color:white;margin:0">Discovery Phase Alert</h2>
+      <p style="color:#fca5a5;margin:4px 0 0">${alerts.length} case(s) entered discovery</p>
+    </div>
+    <div style="background:#f8f9fa;padding:20px;border-radius:0 0 8px 8px">
+      ${alerts.map(a => `<div style="border:1px solid #FCA5A5;background:#FEF2F2;border-left:4px solid #DC2626;border-radius:6px;padding:14px;margin-bottom:12px">
+        <div style="font-weight:bold;color:#1B3A5C">${a.account_name} — ${a.case_type}</div>
+        <div style="color:#555;font-size:13px">Counsel: <strong>${a.outside_counsel || "TBD"}</strong></div>
+        <div style="color:#0E7C6E;font-size:13px;margin-top:6px">${a.consilio_opportunity}</div>
+      </div>`).join("")}
+      <p><a href="https://nazar-ai.com" style="background:#DC2626;color:white;padding:10px 20px;border-radius:6px;text-decoration:none">View Dashboard</a></p>
+    </div>
+  </div>`;
+  return sendEmail(EMAIL_TO, subject, html);
 }
