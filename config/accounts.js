@@ -35,4 +35,6 @@ export const ACCOUNTS = [
   { id: "costco",                 name: "Costco",                        industry: "Retail",                      location: "Issaquah, WA" },
   { id: "coupang",                name: "Coupang",                       industry: "E-commerce",                  location: "Seattle, WA" },
   { id: "apple", name: "Apple", industry: "Technology", location: "Cupertina, CA" },
+  { id: "polymatket", name: "Polymatket", industry: "Technology", location: "New York, NY" },
+  { id: "kalshi", name: "Kalshi", industry: "Technology", location: "New York, NY" },
 ];
