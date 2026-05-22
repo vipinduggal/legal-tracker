@@ -35,6 +35,12 @@ app.use(express.json());
 app.get('/health', (req, res) => res.status(200).json({ status: 'ok' }));
 app.get('/healthz', (req, res) => res.status(200).json({ status: 'ok' }));
 
+// Account count — single source of truth used by all pages
+app.get('/api/account-count', (req, res) => {
+  const accounts = getAccounts();
+  res.json({ count: accounts.length });
+});
+
 app.get('/api/accounts', async (req, res) => {
   try {
     const allResearch = await getAllResearch();

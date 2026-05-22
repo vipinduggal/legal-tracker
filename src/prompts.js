@@ -149,7 +149,19 @@ export function buildWeeklyDigestPrompt(accounts, researchData) {
         `IMMEDIATE triggers (act now): ${immediateTrigs.slice(0, 3).join(" | ") || "None identified"}`,
         `STRATEGIC triggers (shape approach): ${strategicTrigs.slice(0, 2).join(" | ") || "None identified"}`,
         `New filings (last 30 days): ${newFilings.map(f => f.type + " [" + f.source + "]").join(", ") || "None"}`,
-        `Active litigation: ${(d.litigation || []).filter(l => !["Resolved","Settled","Dismissed"].includes(l.status)).map(l => l.type + (l.is_new ? " [NEW]" : "")).join(", ") || "None"}`,
+        `Active litigation (${(d.litigation || []).filter(l => !["Resolved","Settled","Dismissed"].includes(l.status)).length} cases): ${
+          (d.litigation || [])
+            .filter(l => !["Resolved","Settled","Dismissed"].includes(l.status))
+            .slice(0, 5)
+            .map(l => {
+              const base = (l.case_name || l.type) + (l.case_number ? " (" + l.case_number + ")" : "");
+              const counsel = l.outside_counsel_firm ? " — counsel: " + l.outside_counsel_firm : "";
+              const partners = (l.lead_partners || []).slice(0,2).join(", ");
+              const partnerStr = partners ? " (" + partners + ")" : "";
+              const verified = l.courtlistener_verified ? " [COURT VERIFIED]" : "";
+              return base + counsel + partnerStr + verified + (l.is_new ? " [NEW]" : "");
+            }).join(" | ") || "None"
+        }`,
         `Active regulatory: ${(d.regulatory || []).filter(r => !["Resolved","Closed"].includes(r.status)).map(r => r.type + (r.is_new ? " [NEW]" : "")).join(", ") || "None"}`,
         `Cost initiatives: ${d.financial_intel?.cost_initiatives || "None disclosed"}`,
         `Earnings signals: ${d.financial_intel?.earnings_signals || "None"}`,

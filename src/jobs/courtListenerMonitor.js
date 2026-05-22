@@ -62,6 +62,81 @@ function extractDefenseCounsel(attorneys, firms, parties, companyName) {
 }
 
 // Get NOS description
+// Generate immediate and strategic triggers from CourtListener cases
+function generateTriggersFromCases(cases, accountName) {
+  const immediate = [];
+  const strategic = [];
+
+  // NOS codes that indicate very high document volume
+  const CRITICAL_NOS = new Set(["410", "850"]);
+  const HIGH_NOS = new Set(["830", "820", "470", "480"]);
+
+  for (const c of cases) {
+    if (!c.is_high_value) continue;
+
+    const nosCode = (c.suit_nature || "").match(/^(\d+)/)?.[1] || "";
+    const urgency = CRITICAL_NOS.has(nosCode) ? "Critical" :
+                    HIGH_NOS.has(nosCode) ? "High" : "Medium";
+
+    const counsel = c.outside_counsel_firm ?
+      `Outside counsel: ${c.outside_counsel_firm}` +
+      (c.lead_partners?.length ? ` (${c.lead_partners.slice(0,2).join(", ")})` : "") :
+      "Outside counsel not yet identified";
+
+    const filedDate = (c.period || "").split(" ")[0] || "Recently";
+
+    // Immediate trigger — new case filed in last 6 months
+    if (c.is_new || c.courtlistener_verified) {
+      immediate.push({
+        trigger: `${c.case_name || c.type} (${c.case_number || "docket pending"}) — ${c.suit_nature || c.type} filed in ${c.court || "federal court"}. ${counsel}.`,
+        date: filedDate,
+        sales_implication: buildSalesImplication(c),
+        urgency,
+        source: "CourtListener/PACER",
+        case_number: c.case_number,
+        court: c.court,
+        outside_counsel: c.outside_counsel_firm,
+      });
+    }
+
+    // Strategic trigger for sustained litigation patterns
+    if (cases.filter(x => x.is_high_value).length >= 3) {
+      // Multiple high-value cases = strategic pattern
+      strategic.push({
+        trigger: `${accountName} has ${cases.filter(x => x.is_high_value).length} active high-value federal cases including ${c.type} — sustained litigation creating ongoing document review and eDiscovery demand.`,
+        timeframe: "Active now",
+        sales_implication: `Position Consilio as preferred eDiscovery and document review partner. Multiple simultaneous matters create opportunity for master services agreement and volume pricing conversation.`,
+        angle: "Enterprise eDiscovery partnership — master services agreement",
+        source: "CourtListener/PACER",
+      });
+      break; // Only add one strategic trigger per account
+    }
+  }
+
+  return { immediate, strategic };
+}
+
+function buildSalesImplication(litItem) {
+  const nos = (litItem.suit_nature || "").toLowerCase();
+  const counsel = litItem.outside_counsel_firm || "outside counsel";
+
+  if (nos.includes("410") || nos.includes("antitrust")) {
+    return `Antitrust cases typically involve millions of documents. ${counsel} will need eDiscovery support immediately. Contact now before vendor selection is finalized — typically happens within 60 days of case filing.`;
+  } else if (nos.includes("850") || nos.includes("securities")) {
+    return `Securities class actions require rapid custodian collection and large-scale document review. ${counsel} typically selects eDiscovery vendor within 30-60 days. Reach out now.`;
+  } else if (nos.includes("830") || nos.includes("patent")) {
+    return `Patent cases require technical document review and prior art searches. ${counsel} needs specialized eDiscovery support. Source code review may be required.`;
+  } else if (nos.includes("820") || nos.includes("copyright")) {
+    return `Copyright litigation requires content analysis and large-scale document collection. ${counsel} will need eDiscovery support for discovery phase.`;
+  } else if (nos.includes("470") || nos.includes("rico")) {
+    return `RICO cases involve complex multi-party document review across long time periods. Very high document volume expected. ${counsel} should be contacted immediately.`;
+  } else if (nos.includes("480") || nos.includes("consumer")) {
+    return `Consumer protection class actions require structured data analysis alongside document review. ${counsel} needs eDiscovery support.`;
+  } else {
+    return `Active federal litigation creates immediate document review and eDiscovery needs. Contact ${counsel} to position Consilio as preferred vendor.`;
+  }
+}
+
 function getNOSDescription(suitNature) {
   if (!suitNature) return null;
   // Extract NOS code from string like "410 Anti-Trust"
@@ -263,6 +338,37 @@ export async function runCourtListenerMonitor(accountId) {
       }
 
       if (newCases > 0 || updatedCases > 0) {
+        // Generate triggers from high-value CourtListener cases
+        const highValueCases = (data.litigation || []).filter(l =>
+          l.courtlistener_verified && l.is_high_value
+        );
+
+        if (highValueCases.length > 0) {
+          const { immediate, strategic } = generateTriggersFromCases(highValueCases, account.name);
+
+          // Merge with existing triggers — CourtListener triggers take priority
+          const existingImmediate = (data.immediate_triggers || []).filter(t =>
+            t.source !== "CourtListener/PACER"
+          );
+          const existingStrategic = (data.strategic_triggers || []).filter(t =>
+            t.source !== "CourtListener/PACER"
+          );
+
+          data.immediate_triggers = [...immediate, ...existingImmediate];
+          data.strategic_triggers = [...strategic, ...existingStrategic];
+
+          // Also update flat sales_triggers for backwards compat
+          const courtTriggers = immediate.map(t =>
+            `IMMEDIATE [${t.urgency}] [${t.date}] ${t.trigger} — ${t.sales_implication}`
+          );
+          const existingFlat = (data.sales_triggers || []).filter(t =>
+            !t.includes("CourtListener") && !t.includes("PACER")
+          );
+          data.sales_triggers = [...courtTriggers, ...existingFlat];
+
+          logger.info(`  Generated ${immediate.length} immediate + ${strategic.length} strategic triggers from court data`);
+        }
+
         data.courtlistener_last_checked = new Date().toISOString();
         await setResearch(account.id, data);
         results.enriched++;

@@ -290,7 +290,8 @@ function rtab(tab,a){
           h+='<div style="background:var(--g0);border-radius:var(--r);padding:8px 10px;margin-bottom:6px">';
           h+='<div style="font-size:11px;font-weight:600;color:var(--g5);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Outside Counsel</div>';
           h+='<div style="font-size:13px;font-weight:600;color:var(--g9)">'+(l.outside_counsel_firm||l.counsel)+'</div>';
-          if(l.lead_partners&&l.lead_partners.length)h+='<div style="font-size:12px;color:var(--g6)">Partners: '+l.lead_partners.join(', ')+'</div>';
+          var dPartners=(l.lead_partners||[]).filter(function(p){return p&&p.length>3&&p.length<60&&!p.toLowerCase().includes('e-filing')&&!p.toLowerCase().includes('currently')&&!p.toLowerCase().includes('attorney,')&&!p.toLowerCase().includes('direct:')&&!p.match(/^\d/)&&p.split(' ').length>=2;});
+          if(dPartners.length)h+='<div style="font-size:12px;color:var(--g6);margin-top:2px">&#128100; '+dPartners.slice(0,4).join(' &middot; ')+'</div>';
           h+='</div>';
         }
         if(l.key_dates&&l.key_dates.length){
@@ -314,6 +315,8 @@ function rtab(tab,a){
         h+='<div class="ipe">'+l.period+'</div><div class="isu">'+l.summary+'</div>';
         var counsel=l.outside_counsel_firm||l.counsel||'Unknown';
         h+='<div class="ico">Outside counsel: <strong>'+counsel+'</strong>';
+        var aPartners=(l.lead_partners||[]).filter(function(p){return p&&p.length>3&&p.length<60&&!p.toLowerCase().includes('e-filing')&&!p.match(/^\d/);});
+        if(aPartners.length)h+=' &mdash; '+aPartners.slice(0,3).join(', ');
         if(l.case_phase&&l.case_phase!=='Unknown')h+=' &middot; Phase: <strong>'+l.case_phase+'</strong>';
         if(l.key_dates&&l.key_dates.length)h+=' &middot; Next date: '+l.key_dates[0];
         h+='</div></div>';
