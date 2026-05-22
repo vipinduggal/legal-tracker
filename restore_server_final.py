@@ -1,4 +1,9 @@
-import express from 'express';
+import os
+
+home = os.path.expanduser("~")
+path = os.path.join(home, "legal-tracker", "src", "server.js")
+
+content = """import express from 'express';
 import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -14,11 +19,11 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 function getAccounts() {
   try {
     const raw = readFileSync(join(__dirname, '..', 'config', 'accounts.js'), 'utf8');
-    const match = raw.match(/export const ACCOUNTS\s*=\s*(\[[\s\S]*?\]);/);
+    const match = raw.match(/export const ACCOUNTS\\s*=\\s*(\\[[\\s\\S]*?\\]);/);
     if (!match) return ACCOUNTS_STATIC;
     const cleaned = match[1]
-      .replace(/\/\/[^\n]*/g, '')
-      .replace(/([{,]\s*)([a-zA-Z_][a-zA-Z0-9_]*)\s*:/g, '$1"$2":')
+      .replace(/\\/\\/[^\\n]*/g, '')
+      .replace(/([{,]\\s*)([a-zA-Z_][a-zA-Z0-9_]*)\\s*:/g, '$1"$2":')
       .replace(/'/g, '"')
       .trim();
     const parsed = JSON.parse(cleaned);
@@ -103,3 +108,10 @@ export function startServer() {
   app.listen(port, '0.0.0.0', () => logger.info('Dashboard at http://localhost:' + port));
   return app;
 }
+"""
+
+with open(path, 'w') as f:
+    f.write(content)
+
+print("Done — server.js restored cleanly")
+print("File size:", os.path.getsize(path), "bytes")
