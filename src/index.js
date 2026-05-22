@@ -7,6 +7,9 @@ import { initDb } from './db.js';
 import { startServer } from './server.js';
 import { runDailyResearch } from './jobs/researchAll.js';
 import { runFilingsMonitor } from './jobs/filingsMonitor.js';
+import { runLitigationMonitor } from './jobs/litigationMonitor.js';
+import { runCourtListenerMonitor } from './jobs/courtListenerMonitor.js';
+import { runSECFilingsPuller } from './jobs/secFilingsPuller.js';
 import { runWeeklyDigest } from './jobs/weeklyDigest.js';
 import { logger } from './logger.js';
 
@@ -20,6 +23,30 @@ async function main() {
   // Initialize database
   await initDb();
   logger.info('Database initialized');
+
+  // ── Cron: SEC filings deep pull (Sunday 5:00 AM weekly) ──
+  const secCron = process.env.SEC_CRON || '0 5 * * 0';
+  cron.schedule(secCron, async () => {
+    logger.info('Cron: SEC filings puller triggered');
+    try { await runSECFilingsPuller(); } catch(e) { logger.error('SEC puller failed', { error: e.message }); }
+  }, { timezone: 'America/Los_Angeles' });
+  logger.info(`SEC filings puller scheduled: ${secCron} (Sundays 5 AM)`);
+
+  // ── Cron: CourtListener docket monitor (6:45 AM daily) ──
+  const clCron = process.env.COURTLISTENER_CRON || '45 6 * * *';
+  cron.schedule(clCron, async () => {
+    logger.info('Cron: CourtListener monitor triggered');
+    try { await runCourtListenerMonitor(); } catch(e) { logger.error('CourtListener monitor failed', { error: e.message }); }
+  }, { timezone: 'America/Los_Angeles' });
+  logger.info(`CourtListener monitor scheduled: ${clCron} (America/Los_Angeles)`);
+
+  // ── Cron: Litigation intelligence monitor (6:30 AM daily) ──
+  const litCron = process.env.LITIGATION_CRON || '30 6 * * *';
+  cron.schedule(litCron, async () => {
+    logger.info('Cron: litigation monitor triggered');
+    try { await runLitigationMonitor(); } catch(e) { logger.error('Litigation monitor failed', { error: e.message }); }
+  }, { timezone: process.env.TZ || 'America/Los_Angeles' });
+  logger.info(`Litigation monitor scheduled: ${litCron} (America/Los_Angeles)`);
 
   // ── Cron: Daily research (default: 7:00 AM every day) ──
   const researchCron = process.env.RESEARCH_CRON || '0 7 * * *';

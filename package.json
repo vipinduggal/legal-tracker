@@ -12,7 +12,13 @@
     "setup": "node scripts/setup.js",
     "fix:contact": "node scripts/fixContact.js",
     "verify:contacts": "node -e \"import('./src/db.js').then(async ({initDb,getAllResearch,setResearch})=>{await initDb();const r=await getAllResearch();const low=Object.entries(r).filter(([k,v])=>(v.contacts||[]).some(c=>c.confidence==='Low'||!c.verifiedAt));console.log('Accounts with unverified contacts:',low.map(([k])=>k).join(', '));})\"",
-    "cleanup:db": "node scripts/cleanupDb.js"
+    "cleanup:db": "node scripts/cleanupDb.js",
+    "litigation:monitor": "node src/jobs/litigationMonitor.js",
+    "litigation:account": "node -e \"import('./src/jobs/litigationMonitor.js').then(m=>m.runLitigationMonitor())\"",
+    "sec:pull": "node src/jobs/secFilingsPuller.js",
+    "sec:account": "node src/jobs/secFilingsPuller.js",
+    "court:monitor": "node src/jobs/courtListenerMonitor.js",
+    "court:account": "node src/jobs/courtListenerMonitor.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.24.0",

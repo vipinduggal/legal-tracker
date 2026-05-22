@@ -254,13 +254,80 @@ function rtab(tab,a){
       (hf?'<div class="sl">Flex talent</div><div class="pr">'+r.flex.map(function(x){return '<span class="pill ppu">'+x+'</span>';}).join('')+'</div>':'');
   }else if(tab==='litigation'){
     if(!r.litigation||!r.litigation.length){c.innerHTML=emp('No litigation data');return;}
-    var h='<div class="sl">Litigation ('+r.litigation.length+')</div>';
-    r.litigation.forEach(function(l){
-      h+='<div class="ir"><div class="irt"><span class="iti">'+l.type+(l.is_new?'<span class="nt">NEW</span>':'')+'</span>'+sbdg(l.status)+'</div>';
-      h+='<div class="ipe">'+l.period+'</div><div class="isu">'+l.summary+'</div>';
-      h+='<div class="ico">Outside counsel: <strong>'+(l.counsel||'Unknown')+'</strong></div></div>';
-    });
-    c.innerHTML=h;
+    var active=r.litigation.filter(function(l){return!['Resolved','Settled','Dismissed'].includes(l.status);});
+    var resolved=r.litigation.filter(function(l){return['Resolved','Settled','Dismissed'].includes(l.status);});
+    var h='';
+    // Discovery phase cases first — most urgent
+    var discovery=active.filter(function(l){return l.is_in_discovery||l.case_phase==='discovery';});
+    if(discovery.length){
+      h+='<div class="sl" style="color:var(--red)">In discovery — immediate eDiscovery opportunity ('+discovery.length+')</div>';
+      discovery.forEach(function(l){
+        h+='<div style="background:#fff;border:1px solid var(--rl);border-left:4px solid var(--red);border-radius:var(--rl);padding:13px 16px;margin-bottom:10px">';
+        h+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap">';
+        h+='<span style="font-size:13px;font-weight:600;color:var(--g9)">'+(l.case_name||l.type)+'</span>';
+        h+='<span style="font-size:10px;background:var(--rl);color:var(--red);padding:2px 8px;border-radius:20px;font-weight:700">DISCOVERY</span>';
+        if(l.sec_verified)h+='<span style="font-size:10px;background:#DCFCE7;color:#166534;padding:2px 8px;border-radius:20px;font-weight:600">SEC VERIFIED</span>';
+        if(l.courtlistener_verified)h+='<span style="font-size:10px;background:#EDE9FE;color:#5B21B6;padding:2px 8px;border-radius:20px;font-weight:600">COURT RECORD</span>';
+        if(l.is_new)h+='<span class="nt">NEW</span>';
+        h+='</div>';
+        if(l.case_number||l.court)h+='<div style="font-size:11px;color:var(--g4);margin-bottom:4px">'+(l.court||'')+(l.case_number?' &middot; Case No. '+l.case_number:'')+(l.amount_at_stake?' &middot; Exposure: '+l.amount_at_stake:'')+'</div>';
+        if(l.discovery_cutoff||l.trial_date){
+          h+='<div style="font-size:11px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:6px;padding:5px 8px;margin-bottom:6px;display:flex;gap:12px">';
+          if(l.discovery_cutoff)h+='<span>&#128197; Discovery cutoff: <strong>'+l.discovery_cutoff+'</strong></span>';
+          if(l.trial_date)h+='<span>&#9878;&#65039; Trial: <strong>'+l.trial_date+'</strong></span>';
+          h+='</div>';
+        }
+        if(l.last_docket_activity)h+='<div style="font-size:11px;color:var(--g4);margin-bottom:4px">Last docket activity: '+l.last_docket_activity+'</div>';
+        if(l.key_entries&&l.key_entries.length){
+          h+='<div style="font-size:11px;font-weight:600;color:var(--g5);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Recent docket entries</div>';
+          l.key_entries.slice(0,2).forEach(function(e){
+            h+='<div style="font-size:11px;color:var(--g6);margin-bottom:2px">'+e.date+' — '+e.description.slice(0,100)+'</div>';
+          });
+        }
+        h+='<div style="font-size:11px;color:var(--g4);margin-bottom:5px">'+l.period+'</div>';
+        h+='<div style="font-size:12px;color:var(--g6);margin-bottom:8px">'+l.summary+'</div>';
+        if(l.outside_counsel_firm||l.counsel){
+          h+='<div style="background:var(--g0);border-radius:var(--r);padding:8px 10px;margin-bottom:6px">';
+          h+='<div style="font-size:11px;font-weight:600;color:var(--g5);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Outside Counsel</div>';
+          h+='<div style="font-size:13px;font-weight:600;color:var(--g9)">'+(l.outside_counsel_firm||l.counsel)+'</div>';
+          if(l.lead_partners&&l.lead_partners.length)h+='<div style="font-size:12px;color:var(--g6)">Partners: '+l.lead_partners.join(', ')+'</div>';
+          h+='</div>';
+        }
+        if(l.key_dates&&l.key_dates.length){
+          h+='<div style="font-size:11px;font-weight:600;color:var(--g5);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Key Dates</div>';
+          l.key_dates.forEach(function(d){h+='<div style="font-size:12px;color:var(--g6)">&#128197; '+d+'</div>';});
+        }
+        if(l.case_number)h+='<div style="font-size:11px;color:var(--g4);margin-top:4px">Case: '+l.case_number+'</div>';
+        h+='<div style="background:linear-gradient(135deg,#FFF8E7,#FFFBF0);border:1px solid #FDE68A;border-radius:var(--r);padding:8px 10px;margin-top:8px">';
+        h+='<div style="font-size:10px;font-weight:700;color:var(--amber);text-transform:uppercase;margin-bottom:3px">Consilio Opportunity</div>';
+        h+='<div style="font-size:12px;color:var(--g7)">Document review and eDiscovery support needed — discovery phase active</div>';
+        h+='</div>';
+        h+='</div>';
+      });
+    }
+    // Other active cases
+    var otherActive=active.filter(function(l){return!l.is_in_discovery&&l.case_phase!=='discovery';});
+    if(otherActive.length){
+      h+='<div class="sl" style="margin-top:'+(discovery.length?'16':'0')+'px">Active litigation ('+otherActive.length+')</div>';
+      otherActive.forEach(function(l){
+        h+='<div class="ir"><div class="irt"><span class="iti">'+l.type+(l.is_new?'<span class="nt">NEW</span>':'')+'</span>'+sbdg(l.status)+'</div>';
+        h+='<div class="ipe">'+l.period+'</div><div class="isu">'+l.summary+'</div>';
+        var counsel=l.outside_counsel_firm||l.counsel||'Unknown';
+        h+='<div class="ico">Outside counsel: <strong>'+counsel+'</strong>';
+        if(l.case_phase&&l.case_phase!=='Unknown')h+=' &middot; Phase: <strong>'+l.case_phase+'</strong>';
+        if(l.key_dates&&l.key_dates.length)h+=' &middot; Next date: '+l.key_dates[0];
+        h+='</div></div>';
+      });
+    }
+    // Resolved
+    if(resolved.length){
+      h+='<div class="sl" style="margin-top:16px">Resolved ('+resolved.length+')</div>';
+      resolved.forEach(function(l){
+        h+='<div class="ir" style="opacity:.6"><div class="irt"><span class="iti">'+l.type+'</span>'+sbdg(l.status)+'</div>';
+        h+='<div class="ipe">'+l.period+'</div><div class="isu">'+l.summary+'</div></div>';
+      });
+    }
+    c.innerHTML=h||emp('No litigation data');
   }else if(tab==='regulatory'){
     if(!r.regulatory||!r.regulatory.length){c.innerHTML=emp('No regulatory data');return;}
     var h='<div class="sl">Regulatory ('+r.regulatory.length+')</div>';

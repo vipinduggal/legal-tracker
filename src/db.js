@@ -86,3 +86,28 @@ export async function logRun(entry) {
 }
 
 export { db };
+
+// Notification deduplication — tracks what alerts have been sent
+// Prevents re-alerting about the same litigation/regulatory item
+
+export function hasBeenNotified(accountId, itemKey) {
+  const key = accountId + ':' + itemKey;
+  const notified = db.data.notified || {};
+  if (!notified[key]) return false;
+  const daysSince = (Date.now() - new Date(notified[key]).getTime()) / (1000 * 60 * 60 * 24);
+  return daysSince < 30;
+}
+
+export async function markNotified(accountId, itemKey) {
+  await db.read();
+  db.data.notified = db.data.notified || {};
+  const key = accountId + ':' + itemKey;
+  db.data.notified[key] = new Date().toISOString();
+  // Clean up entries older than 60 days
+  const now = Date.now();
+  for (const k of Object.keys(db.data.notified)) {
+    const age = (now - new Date(db.data.notified[k]).getTime()) / (1000 * 60 * 60 * 24);
+    if (age > 60) delete db.data.notified[k];
+  }
+  await db.write();
+}
