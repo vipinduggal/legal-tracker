@@ -5,7 +5,7 @@ import pLimit from 'p-limit';
 import { ACCOUNTS } from '../config/accounts.js';
 import { researchAccount, detectChanges } from '../researcher.js';
 import { getResearch, setResearch, isStale, logRun } from '../db.js';
-import { sendAccountUpdateEmail } from '../emailer.js';
+import { sendAccountNotification } from '../emailer.js';
 import { postAccountUpdateToTeams } from '../teams.js';
 import { logger } from '../logger.js';
 
@@ -47,7 +47,7 @@ export async function runDailyResearch(forceAll = false) {
         if (hasRealChanges) {
           results.notified++;
           await Promise.allSettled([
-            sendAccountUpdateEmail(account, changes, newData),
+            sendAccountNotification(account, changes, newData),
             postAccountUpdateToTeams(account, changes, newData),
           ]);
         }

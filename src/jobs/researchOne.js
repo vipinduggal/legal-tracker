@@ -6,7 +6,7 @@ import 'dotenv/config';
 import { ACCOUNTS } from '../config/accounts.js';
 import { researchAccount, detectChanges } from '../researcher.js';
 import { getResearch, setResearch } from '../db.js';
-import { sendAccountUpdateEmail } from '../emailer.js';
+import { sendAccountNotification } from '../emailer.js';
 import { logger } from '../logger.js';
 
 const query = process.argv[2]?.toLowerCase();
@@ -46,4 +46,4 @@ await setResearch(account.id, newData);
 logger.info(`Research complete for ${account.name}`, { changes });
 logger.info('Contacts found:', newData.contacts.map(c => `${c.name} (${c.tag})`));
 
-await sendAccountUpdateEmail(account, changes, newData);
+await sendAccountNotification(account, changes, newData);
