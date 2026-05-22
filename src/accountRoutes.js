@@ -105,7 +105,7 @@ export function registerAccountRoutes(app) {
         try {
           const { researchAccount, detectChanges } = await import('./researcher.js');
           const { getResearch, setResearch, logRun } = await import('./db.js');
-          const { sendAccountUpdateEmail } = await import('./emailer.js');
+          const { sendAccountNotification } = await import('./emailer.js');
           const { postAccountUpdateToTeams } = await import('./teams.js');
           const oldData = await getResearch(id);
           const newData = await researchAccount(account);
@@ -115,7 +115,7 @@ export function registerAccountRoutes(app) {
             const hasChanges = !oldData || changes.some(c => !c.includes('No significant'));
             if (hasChanges) {
               await Promise.allSettled([
-                sendAccountUpdateEmail(account, changes, newData),
+                sendAccountNotification(account, changes, newData),
                 postAccountUpdateToTeams(account, changes, newData),
               ]);
             }

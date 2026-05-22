@@ -5,7 +5,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { ACCOUNTS } from '../config/accounts.js';
 import { getAllResearch, saveDigest, logRun } from '../db.js';
 import { buildWeeklyDigestPrompt } from '../prompts.js';
-import { sendWeeklyDigestEmail } from '../emailer.js';
+import { sendWeeklyDigest } from '../emailer.js';
 import { postWeeklyDigestToTeams } from '../teams.js';
 import { logger } from '../logger.js';
 
@@ -58,7 +58,7 @@ export async function runWeeklyDigest() {
 
     // Send notifications
     await Promise.allSettled([
-      sendWeeklyDigestEmail(digest),
+      sendWeeklyDigest(digest),
       postWeeklyDigestToTeams(digest),
     ]);
 

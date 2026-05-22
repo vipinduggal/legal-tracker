@@ -7,7 +7,7 @@ import "dotenv/config";
 import axios from "axios";
 import { ACCOUNTS } from "../../config/accounts.js";
 import { getResearch, setResearch, logRun } from "../db.js";
-import { sendFilingsAlertEmail } from "../emailer.js";
+import { sendFilingsAlert } from "../emailer.js";
 import { postAccountUpdateToTeams } from "../teams.js";
 import { logger } from "../logger.js";
 
@@ -336,7 +336,7 @@ export async function runFilingsMonitor() {
         // Send alerts
         allAlerts.push({ account, filings: trueNew });
         await Promise.allSettled([
-          sendFilingsAlertEmail(account, trueNew),
+          sendFilingsAlert(account, trueNew),
           postAccountUpdateToTeams(account, trueNew.map(f => "NEW: " + f.type), { contacts: [], litigation: trueNew, regulatory: [], intel_summary: trueNew[0]?.summary || "" }),
         ]);
         results.alertsSent++;
