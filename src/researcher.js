@@ -1,6 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { buildResearchPromptA, buildResearchPromptB } from "./prompts.js";
 import { verifyAccountContacts, getLiveIntelligence } from "./contactVerifier.js";
+import { hasBeenNotified, markNotified } from "./db.js";
 import { logger } from "./logger.js";
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
@@ -159,32 +160,57 @@ export async function researchAccount(account, retries = 0) {
 /**
  * Detect changes between old and new research data.
  */
-export function detectChanges(oldData, newData) {
+export function detectChanges(oldData, newData, accountId) {
   if (!oldData) return ["New account researched"];
   const changes = [];
 
-  const oldContacts = (oldData.contacts || []).map(c => c.name).sort().join(",");
-  const newContacts = (newData.contacts || []).map(c => c.name).sort().join(",");
-  if (oldContacts !== newContacts) {
-    const added = (newData.contacts || []).filter(c => !(oldData.contacts || []).find(o => o.name === c.name));
-    if (added.length) changes.push(`${added.length} new contact(s): ${added.map(c => c.name).join(", ")}`);
+  // New contacts
+  const oldContactNames = new Set((oldData.contacts || []).map(c => c.name));
+  const newContacts = (newData.contacts || []).filter(c => !oldContactNames.has(c.name));
+  if (newContacts.length) {
+    changes.push(`${newContacts.length} new contact(s): ${newContacts.map(c => c.name).join(", ")}`);
   }
 
-  const oldLit = (oldData.litigation || []).length;
-  const newLit = (newData.litigation || []).length;
-  if (newLit > oldLit) changes.push(`${newLit - oldLit} new litigation item(s): ${(newData.litigation || []).slice(0, 2).map(l => l.type).join(", ")}`);
+  // New litigation — only items not previously seen
+  const oldLitKeys = new Set((oldData.litigation || []).map(l => l.type + '|' + l.period));
+  const newLitItems = (newData.litigation || []).filter(l => {
+    const key = l.type + '|' + l.period;
+    return !oldLitKeys.has(key);
+  });
+  if (newLitItems.length) {
+    changes.push(`${newLitItems.length} new litigation item(s): ${newLitItems.slice(0, 2).map(l => l.type).join(", ")}`);
+  }
 
-  const oldReg = (oldData.regulatory || []).length;
-  const newReg = (newData.regulatory || []).length;
-  if (newReg > oldReg) changes.push(`${newReg - oldReg} new regulatory item(s): ${(newData.regulatory || []).slice(0, 2).map(r => r.type).join(", ")}`);
+  // New regulatory — only items not previously seen
+  const oldRegKeys = new Set((oldData.regulatory || []).map(r => r.type + '|' + r.period));
+  const newRegItems = (newData.regulatory || []).filter(r => {
+    const key = r.type + '|' + r.period;
+    return !oldRegKeys.has(key);
+  });
+  if (newRegItems.length) {
+    changes.push(`${newRegItems.length} new regulatory item(s): ${newRegItems.slice(0, 2).map(r => r.type).join(", ")}`);
+  }
 
-  const oldTech = (oldData.tech || []).sort().join(",");
-  const newTech = (newData.tech || []).sort().join(",");
-  if (oldTech !== newTech) changes.push(`New technology detected: ${(newData.tech || []).slice(0, 3).join(", ")}`);
+  // New technology
+  const oldTechSet = new Set((oldData.tech || []).map(t => t.toLowerCase()));
+  const newTechItems = (newData.tech || []).filter(t => !oldTechSet.has(t.toLowerCase()));
+  if (newTechItems.length) {
+    changes.push(`New technology detected: ${newTechItems.slice(0, 3).join(", ")}`);
+  }
 
-  const oldRoles = (oldData.open_roles || []).length;
-  const newRoles = (newData.open_roles || []).length;
-  if (newRoles > oldRoles) changes.push(`${newRoles} open legal role(s) found: ${(newData.open_roles || []).slice(0, 2).map(r => r.title).join(", ")}`);
+  // New open roles — compare by title
+  const oldRoleTitles = new Set((oldData.open_roles || []).map(r => (r.title || '').toLowerCase()));
+  const newRoleItems = (newData.open_roles || []).filter(r => !oldRoleTitles.has((r.title || '').toLowerCase()));
+  if (newRoleItems.length) {
+    changes.push(`${newRoleItems.length} new open legal role(s): ${newRoleItems.slice(0, 2).map(r => r.title).join(", ")}`);
+  }
+
+  // New triggers — check if immediate triggers changed
+  const oldTrigCount = (oldData.immediate_triggers || []).length;
+  const newTrigCount = (newData.immediate_triggers || []).length;
+  if (newTrigCount > oldTrigCount) {
+    changes.push(`${newTrigCount - oldTrigCount} new immediate trigger(s) detected`);
+  }
 
   return changes.length ? changes : ["No significant changes detected"];
 }
