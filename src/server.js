@@ -32,6 +32,8 @@ const app = express();
 app.use(express.json());
 
 // Health check
+app.get('/research', (req, res) => res.sendFile(path.join(__dirname, 'research.html')));
+
 app.get('/health', (req, res) => res.status(200).json({ status: 'ok' }));
 app.get('/healthz', (req, res) => res.status(200).json({ status: 'ok' }));
 
