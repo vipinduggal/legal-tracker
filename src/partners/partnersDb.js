@@ -59,7 +59,7 @@ export async function logPartnerRun(entry) {
 
 // --- Manual partner add + daily caps ----------------------------------------
 const ADDS_PER_DAY = 10;
-const IMMEDIATE_SEARCHES_PER_DAY = 2;
+const IMMEDIATE_SEARCHES_PER_DAY = 5;
 
 function today() { return new Date().toISOString().slice(0, 10); }
 
