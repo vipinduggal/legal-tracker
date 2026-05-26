@@ -19,7 +19,7 @@ async function perplexitySearch(query) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: "llama-3.1-sonar-large-128k-online",
+      model: "sonar",
       messages: [{ role: "user", content: query }],
       max_tokens: 2000,
     }),
@@ -92,16 +92,32 @@ Return JSON only. No markdown fences.`;
     const raw = response.content.filter(b => b.type === "text").map(b => b.text).join("").trim();
     let result;
     try {
-      result = JSON.parse(raw);
-    } catch(e) {
-      // Try to extract JSON
-      const start = raw.indexOf("{");
-      const end = raw.lastIndexOf("}");
+      // Aggressive JSON cleaning
+      let cleaned = raw
+        .replace(/^```json\s*/i, "").replace(/^```\s*/i, "").replace(/```\s*$/i, "")
+        .trim();
+      // Extract just the JSON object
+      const start = cleaned.indexOf("{");
+      const end = cleaned.lastIndexOf("}");
       if (start > -1 && end > start) {
-        result = JSON.parse(raw.slice(start, end + 1));
-      } else {
-        throw new Error("Could not parse Claude response as JSON");
+        cleaned = cleaned.slice(start, end + 1);
       }
+      // Fix common JSON issues — unescaped newlines in strings
+      cleaned = cleaned.replace(/([^\\])"([^"]*?)\n([^"]*?)"/g, (m, p1, p2, p3) => {
+        return p1 + '"' + p2 + ' ' + p3 + '"';
+      });
+      result = JSON.parse(cleaned);
+    } catch(e) {
+      // Last resort — ask Claude for simpler output
+      logger.warn("JSON parse failed, retrying with simpler prompt: " + e.message);
+      const retry = await client.messages.create({
+        model: "claude-haiku-4-5-20251001",
+        max_tokens: 1000,
+        messages: [{ role: "user", content: "Return ONLY valid JSON, no markdown, no extra text. Summarize this company for a sales rep: " + companyName + ". Use this exact structure: {\"company\":\"\",\"research_date\":\"\",\"executive_summary\":\"\",\"contacts\":[],\"litigation\":[],\"financial_signals\":[],\"immediate_triggers\":[],\"strategic_notes\":\"\",\"ediscovery_opportunity\":\"Unknown\"}" }],
+      });
+      const retryRaw = retry.content.filter(b => b.type === "text").map(b => b.text).join("").trim();
+      const rs = retryRaw.indexOf("{"); const re = retryRaw.lastIndexOf("}");
+      result = JSON.parse(retryRaw.slice(rs, re + 1));
     }
 
     // Send email if requested
