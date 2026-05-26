@@ -6,6 +6,8 @@ import { ACCOUNTS as ACCOUNTS_STATIC } from '../config/accounts.js';
 import { getAllResearch, getLatestDigest, db } from './db.js';
 import { logger } from './logger.js';
 import { registerAccountRoutes } from './accountRoutes.js';
+import { registerPartnerRoutes } from './partners/partnerRoutes.js';
+import { initPartnersDb } from './partners/partnersDb.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -96,6 +98,8 @@ app.get('/api/status', async (req, res) => {
 });
 
 registerAccountRoutes(app);
+registerPartnerRoutes(app);
+initPartnersDb().catch(e => logger.warn('Partner DB init failed: ' + e.message));
 
 app.get('/', (req, res) => {
   try {

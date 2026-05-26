@@ -18,7 +18,8 @@
     "sec:pull": "node src/jobs/secFilingsPuller.js",
     "sec:account": "node src/jobs/secFilingsPuller.js",
     "court:monitor": "node src/jobs/courtListenerMonitor.js",
-    "court:account": "node src/jobs/courtListenerMonitor.js"
+    "court:account": "node src/jobs/courtListenerMonitor.js",
+    "partners:detect": "node src/partners/partnerMonitor.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.24.0",

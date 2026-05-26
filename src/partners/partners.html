@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Partner Intelligence — Consilio</title>
+<style>
+  :root { --bg:#0f1117; --card:#1a1d27; --line:#2a2e3a; --txt:#e6e8ee; --mut:#8b90a0; --def:#3fb950; --warn:#d29922; --hot:#f85149; --acc:#388bfd; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--txt); font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+  header { padding:20px 28px; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:16px; }
+  header h1 { font-size:18px; margin:0; font-weight:600; }
+  header .sub { color:var(--mut); font-size:13px; }
+  .wrap { padding:24px 28px; max-width:1100px; margin:0 auto; }
+  h2 { font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:var(--mut); margin:28px 0 12px; }
+  .trigger { background:var(--card); border:1px solid var(--line); border-left:3px solid var(--acc); border-radius:8px; padding:14px 16px; margin-bottom:10px; }
+  .trigger.NEW_DEFENSE_MATTER { border-left-color:var(--def); }
+  .trigger.ENTERED_DISCOVERY { border-left-color:var(--warn); }
+  .trigger .top { display:flex; justify-content:space-between; gap:12px; margin-bottom:6px; }
+  .trigger .who { font-weight:600; }
+  .trigger .tag { font-size:11px; padding:2px 8px; border-radius:10px; background:#222633; color:var(--mut); white-space:nowrap; }
+  .trigger .case { color:var(--acc); font-size:13px; margin-bottom:6px; }
+  .trigger .angle { color:var(--txt); font-size:13px; }
+  .trigger .meta { color:var(--mut); font-size:12px; margin-top:8px; }
+  table { width:100%; border-collapse:collapse; background:var(--card); border:1px solid var(--line); border-radius:8px; overflow:hidden; }
+  th,td { text-align:left; padding:10px 14px; border-bottom:1px solid var(--line); font-size:13px; }
+  th { color:var(--mut); font-weight:500; font-size:12px; text-transform:uppercase; letter-spacing:.04em; }
+  tr:last-child td { border-bottom:none; }
+  .pill { font-size:11px; padding:2px 7px; border-radius:10px; }
+  .pill.fed { background:#13351c; color:var(--def); }
+  .pill.leaving { background:#3a2a0c; color:var(--warn); }
+  .empty { color:var(--mut); padding:20px; text-align:center; }
+  a { color:var(--acc); text-decoration:none; }
+  .note { color:var(--mut); font-size:12px; margin-top:6px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Partner Intelligence</h1>
+  <span class="sub">Defense-side litigation triggers · Consilio · v1 detection-only</span>
+</header>
+<div class="wrap">
+  <h2>Add Partner</h2>
+  <div id="addbox" style="background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px;">
+    <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;">
+      <div><label style="display:block;color:var(--mut);font-size:12px;margin-bottom:3px;">Name *</label>
+        <input id="f-name" placeholder="Jane Q. Litigator" style="background:#0f1117;border:1px solid var(--line);color:var(--txt);border-radius:6px;padding:8px 10px;width:200px;"></div>
+      <div><label style="display:block;color:var(--mut);font-size:12px;margin-bottom:3px;">Firm *</label>
+        <input id="f-firm" placeholder="Davis Wright Tremaine" style="background:#0f1117;border:1px solid var(--line);color:var(--txt);border-radius:6px;padding:8px 10px;width:200px;"></div>
+      <div><label style="display:block;color:var(--mut);font-size:12px;margin-bottom:3px;">City</label>
+        <input id="f-city" placeholder="Seattle" style="background:#0f1117;border:1px solid var(--line);color:var(--txt);border-radius:6px;padding:8px 10px;width:130px;"></div>
+      <div><label style="display:block;color:var(--mut);font-size:12px;margin-bottom:3px;">Tier</label>
+        <select id="f-tier" style="background:#0f1117;border:1px solid var(--line);color:var(--txt);border-radius:6px;padding:8px 10px;">
+          <option value="partner">Partner</option><option value="senior_associate">Senior Associate</option></select></div>
+      <label style="display:flex;align-items:center;gap:6px;color:var(--mut);font-size:13px;cursor:pointer;">
+        <input type="checkbox" id="f-now"> Search immediately</label>
+      <button id="f-submit" onclick="addPartner()" style="background:var(--acc);color:#fff;border:none;border-radius:6px;padding:9px 18px;cursor:pointer;font-weight:600;">Add</button>
+    </div>
+    <div id="addmsg" class="note" style="margin-top:10px;"></div>
+    <div id="limits" class="note" style="margin-top:4px;"></div>
+  </div>
+
+  <h2>Sales Triggers</h2>
+  <div id="triggers"><div class="empty">Loading…</div></div>
+  <div class="note">Triggers are detected, not yet emailed. Run <code>npm run partners:detect</code> to refresh. Winding-down and state-court-exit cases are suppressed from outreach triggers by design.</div>
+
+  <h2>Tracked Partners</h2>
+  <table id="partners"><thead><tr>
+    <th>Partner</th><th>Firm</th><th>City</th><th>Defense Cases</th><th>Triggers</th><th>Coverage</th><th>Last Checked</th><th></th>
+  </tr></thead><tbody><tr><td colspan="7" class="empty">Loading…</td></tr></tbody></table>
+</div>
+<script>
+async function load() {
+  try {
+    const [trigs, partners] = await Promise.all([
+      fetch('/api/partners/triggers/all').then(r=>r.json()),
+      fetch('/api/partners').then(r=>r.json()),
+    ]);
+
+    const tc = document.getElementById('triggers');
+    if (!trigs.length) {
+      tc.innerHTML = '<div class="empty">No triggers detected yet. Run a detection pass.</div>';
+    } else {
+      tc.innerHTML = trigs.map(t => `
+        <div class="trigger ${t.type}">
+          <div class="top">
+            <span class="who">${t.partner}</span>
+            <span class="tag">${t.type.replace(/_/g,' ')}</span>
+          </div>
+          <div class="case">${t.caseName||''} ${t.court?('· '+t.court):''}</div>
+          <div class="angle">${t.outreachAngle||''}</div>
+          <div class="meta">${new Date(t.detectedAt).toLocaleString()}${t.signals?(' · signals: '+t.signals.join(', ')):''}</div>
+        </div>`).join('');
+    }
+
+    const pb = document.querySelector('#partners tbody');
+    pb.innerHTML = partners.map(p => `
+      <tr>
+        <td><a href="/api/partners/${p.id}">${p.name}</a></td>
+        <td>${p.firm}</td>
+        <td>${p.city||''}</td>
+        <td>${p.defenseCases}</td>
+        <td>${p.triggers}</td>
+        <td>${p.leavingFederal>0?'<span class="pill leaving">'+p.leavingFederal+' leaving federal</span>':'<span class="pill fed">federal</span>'}</td>
+        <td>${p.lastChecked?new Date(p.lastChecked).toLocaleDateString():'—'}</td>
+        <td><button onclick="checkNow('${p.id}','${(p.name||'').replace(/'/g,"")}')" style="background:#222633;color:var(--acc);border:1px solid var(--line);border-radius:5px;padding:4px 10px;cursor:pointer;font-size:12px;">check now</button></td>
+      </tr>`).join('');
+  } catch(e) {
+    document.getElementById('triggers').innerHTML = '<div class="empty">Error: '+e.message+'</div>';
+  }
+}
+async function loadLimits() {
+  try {
+    const l = await fetch('/api/partners/limits').then(r=>r.json());
+    document.getElementById('limits').textContent =
+      `Adds today: ${l.addsUsed}/${l.addsPerDay} · Immediate searches today: ${l.immediateUsed}/${l.immediatePerDay}. ` +
+      `Up to 5 at a time, ${l.addsPerDay}/day. Immediate search capped at ${l.immediatePerDay}/day (rate limits); others run on the monthly check.`;
+  } catch(e) {}
+}
+
+async function addPartner() {
+  const btn = document.getElementById('f-submit');
+  const msg = document.getElementById('addmsg');
+  const body = {
+    name: document.getElementById('f-name').value,
+    firm: document.getElementById('f-firm').value,
+    city: document.getElementById('f-city').value,
+    tier: document.getElementById('f-tier').value,
+    searchNow: document.getElementById('f-now').checked,
+  };
+  if (!body.name.trim() || !body.firm.trim()) { msg.style.color='var(--hot)'; msg.textContent='Name and firm are required.'; return; }
+  btn.disabled = true; btn.textContent = 'Adding…';
+  try {
+    const r = await fetch('/api/partners/add', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+    const d = await r.json();
+    if (!d.ok) { msg.style.color='var(--hot)'; msg.textContent = d.error || 'Add failed.'; }
+    else {
+      msg.style.color='var(--def)';
+      msg.textContent = `Added ${body.name}. ${d.searchMsg||''}`;
+      document.getElementById('f-name').value=''; document.getElementById('f-firm').value=''; document.getElementById('f-city').value=''; document.getElementById('f-now').checked=false;
+      loadLimits(); setTimeout(load, d.searched ? 4000 : 0);
+    }
+  } catch(e) { msg.style.color='var(--hot)'; msg.textContent='Error: '+e.message; }
+  btn.disabled = false; btn.textContent = 'Add';
+}
+
+async function checkNow(id, name) {
+  try {
+    const r = await fetch('/api/partners/'+id+'/check', { method:'POST' });
+    const d = await r.json();
+    alert(d.ok ? `Checking ${name} — refresh in a minute.` : (d.error||'Failed'));
+    loadLimits();
+  } catch(e) { alert('Error: '+e.message); }
+}
+
+loadLimits();
+load();
+</script>
+</body>
+</html>
