@@ -417,7 +417,7 @@ export async function runLitigationMonitor() {
           const isRegulatoryOnly = (litItem.type || "").toLowerCase().match(
             /regulatory|investigation|ftc|sec inquiry|doj investigation|eu commission|congressional|agency action/
           );
-          if (counselInfo.is_in_discovery && !alreadyAlerted && !isRegulatoryOnly) {
+          if (counselInfo.is_in_discovery && !alreadyAlerted && !isRegulatoryOnly && litItem.courtlistener_id) {
             results.inDiscovery++;
             const alert = buildDiscoveryAlert(account, litItem, counselInfo);
             alerts.push(alert);

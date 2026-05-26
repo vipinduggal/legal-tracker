@@ -44,7 +44,8 @@ export async function runDailyResearch(forceAll = false) {
         // Only notify if there are meaningful changes (or it's first research)
         const hasRealChanges = !oldData || changes.some(c => !c.includes('No significant changes'));
 
-        if (hasRealChanges) {
+        // Email only priority accounts daily; non-priority surface in the weekly digest.
+        if (hasRealChanges && account.priority) {
           results.notified++;
           await Promise.allSettled([
             sendAccountNotification(account, changes, newData),
