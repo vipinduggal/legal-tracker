@@ -6,6 +6,7 @@ import { ACCOUNTS as ACCOUNTS_STATIC } from '../config/accounts.js';
 import { getAllResearch, getLatestDigest, db } from './db.js';
 import { logger } from './logger.js';
 import { registerAccountRoutes } from './accountRoutes.js';
+import quickResearchRouter from './routes/quickResearch.js';
 import { registerPartnerRoutes } from './partners/partnerRoutes.js';
 import { initPartnersDb } from './partners/partnersDb.js';
 
@@ -34,7 +35,8 @@ const app = express();
 app.use(express.json());
 
 // Health check
-app.get('/research', (req, res) => res.sendFile(path.join(__dirname, 'research.html')));
+app.get('/research', (req, res) => res.sendFile(join(dirname(new URL(import.meta.url).pathname), 'research.html')));
+app.use('/api/quick-research', quickResearchRouter);
 
 app.get('/health', (req, res) => res.status(200).json({ status: 'ok' }));
 app.get('/healthz', (req, res) => res.status(200).json({ status: 'ok' }));
