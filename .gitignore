@@ -1,5 +1,9 @@
-.env
-data/
-logs/
 node_modules/
-*.log
+.env
+data/db.json
+data/db.json.backup
+*.bak
+*.backup
+*.zip
+logs/
+.DS_Store
