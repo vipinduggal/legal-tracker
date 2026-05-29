@@ -1,0 +1,993 @@
+{
+  "partners": {
+    "katsantonis-chris-dlapiper": {
+      "profile": {
+        "id": "katsantonis-chris-dlapiper",
+        "name": "Chris M. Katsantonis",
+        "nameVariants": [
+          "Katsantonis",
+          "Christopher Katsantonis",
+          "Chris Katsantonis"
+        ],
+        "firm": "DLA Piper",
+        "city": "Seattle",
+        "tier": "partner",
+        "knownCase": {
+          "caption": "Redstone Logics LLC v. Advanced Micro Devices, Inc.",
+          "defendant": "Advanced Micro Devices"
+        },
+        "active": true
+      },
+      "cases": {
+        "67545452": {
+          "docket_id": 67545452,
+          "caseName": "Ozmo Licensing LLC v. Dell Technologies Inc.",
+          "court": "txwd",
+          "jurisdiction": "federal",
+          "dateFiled": "2022-06-21",
+          "side": "DEFENSE",
+          "contact": {
+            "email": "chris.katsantonis@us.dlapiper.com",
+            "phone": "(312) 368-2127",
+            "raw": "DLA Piper LLP\n444 West Lake Street\nSte 900\nChicago, IL 60606\n312-368-2127\nFax: 312-251-5727\nEmail: chris.katsantonis@us.dlapiper.com\n"
+          },
+          "entryCount": 103,
+          "newestEntry": "2024-02-27",
+          "discoverySignals": [
+            "scheduling order"
+          ],
+          "windingDown": true,
+          "stateExit": null,
+          "lastSeen": "2026-05-26T01:25:41.561Z"
+        }
+      },
+      "triggers": []
+    },
+    "tangri-ragesh-mofo": {
+      "profile": {
+        "id": "tangri-ragesh-mofo",
+        "name": "Ragesh K. Tangri",
+        "nameVariants": [
+          "Tangri",
+          "Ragesh Tangri"
+        ],
+        "firm": "Morrison & Foerster",
+        "city": "San Francisco",
+        "tier": "partner",
+        "knownCase": {
+          "caption": "Reddit, Inc. v. Anthropic, PBC",
+          "defendant": "Anthropic"
+        },
+        "active": true
+      },
+      "cases": {
+        "70704683": {
+          "docket_id": 70704683,
+          "caseName": "Reddit, Inc. v. Anthropic PBC",
+          "court": "cand",
+          "jurisdiction": "LEAVING_FEDERAL",
+          "dateFiled": "2025-07-03",
+          "side": "DEFENSE",
+          "contact": {
+            "email": "RTangri@mofo.com",
+            "phone": "(415) 268-7000",
+            "raw": "Morrison & Foerster LLP\n425 Market Street\nSan Francisco, CA 94105\n415-268-7000\nFax: 415-268-7522\nEmail: RTangri@mofo.com\n"
+          },
+          "entryCount": 81,
+          "newestEntry": "2026-04-03",
+          "discoverySignals": [
+            "discovery"
+          ],
+          "windingDown": false,
+          "stateExit": "LEFT_FEDERAL",
+          "lastSeen": "2026-05-26T01:07:18.945Z"
+        }
+      },
+      "triggers": [],
+      "lastFindStatus": "api_error"
+    },
+    "caplan-matthew-cooley": {
+      "profile": {
+        "id": "caplan-matthew-cooley",
+        "name": "Matthew Caplan",
+        "nameVariants": [
+          "Caplan",
+          "Matthew D. Caplan",
+          "Matt Caplan"
+        ],
+        "firm": "Cooley",
+        "city": "San Francisco",
+        "tier": "partner",
+        "knownCase": {
+          "caption": "Doe et al v. Roblox Corporation et al",
+          "defendant": "Roblox"
+        },
+        "active": true
+      },
+      "cases": {},
+      "triggers": [],
+      "lastFindStatus": "api_error"
+    },
+    "burnside-fred-dwt": {
+      "profile": {
+        "id": "burnside-fred-dwt",
+        "name": "Fred B. Burnside",
+        "nameVariants": [
+          "Burnside",
+          "Fred Burnside",
+          "Frederick Burnside"
+        ],
+        "firm": "Davis Wright Tremaine",
+        "city": "Seattle",
+        "tier": "partner",
+        "active": true
+      },
+      "cases": {
+        "69154192": {
+          "docket_id": 69154192,
+          "caseName": "Terrific Deal, Inc. v. Amazon.com Inc.",
+          "court": "innd",
+          "jurisdiction": "LEAVING_FEDERAL",
+          "dateFiled": "2024-09-11",
+          "side": "DEFENSE",
+          "contact": {
+            "email": "markburnside@dwt.com",
+            "phone": "(213) 633-6800",
+            "raw": "Davis Wright Tremaine LLP - LA/CA\n350 S Grand Ave Ste 27th Fl\nLos Angeles, CA 90071\n213-633-6800\nFax: 213-633-6899\nEmail: markburnside@dwt.com\n"
+          },
+          "entryCount": 17,
+          "newestEntry": "2024-09-27",
+          "discoverySignals": [],
+          "windingDown": false,
+          "stateExit": "REMAND_PENDING",
+          "lastSeen": "2026-05-26T01:37:22.693Z"
+        },
+        "69206024": {
+          "docket_id": 69206024,
+          "caseName": "Demario Preston v. Navy Federal Credit Union",
+          "court": "cacd",
+          "jurisdiction": "federal",
+          "dateFiled": "2024-09-27",
+          "side": "DEFENSE",
+          "contact": {
+            "email": "fredburnside@dwt.com",
+            "phone": "(213) 633-6800",
+            "raw": "Davis Wright Tremaine LLP\n865 South Figueroa Street, 24th Floor\nLos Angeles, CA 90017-2566\n213-633-6800\nFax: 213-633-6899\nEmail: fredburnside@dwt.com\n"
+          },
+          "entryCount": 81,
+          "newestEntry": "2026-05-07",
+          "discoverySignals": [],
+          "windingDown": false,
+          "stateExit": null,
+          "lastSeen": "2026-05-26T01:36:17.757Z"
+        },
+        "69545256": {
+          "docket_id": 69545256,
+          "caseName": "In re Microsoft Browser Extension Litigation",
+          "court": "wawd",
+          "jurisdiction": "federal",
+          "dateFiled": "2025-01-14",
+          "side": "DEFENSE",
+          "contact": {
+            "email": "fredburnside@dwt.com",
+            "phone": "(206) 622-3150",
+            "raw": "DAVIS WRIGHT TREMAINE (SEA)\n920 FIFTH AVE\nSTE 3300\nSEATTLE, WA 98104-1610\n206-622-3150\nFax: 206-757-7700\nEmail: fredburnside@dwt.com\n"
+          },
+          "entryCount": 85,
+          "newestEntry": "2026-05-04",
+          "discoverySignals": [
+            "protective order",
+            "discovery"
+          ],
+          "windingDown": false,
+          "stateExit": null,
+          "lastSeen": "2026-05-26T01:34:50.522Z"
+        },
+        "72213354": {
+          "docket_id": 72213354,
+          "caseName": "Fons v. Grocery Outlet, Inc.",
+          "court": "cand",
+          "jurisdiction": "federal",
+          "dateFiled": "2026-01-30",
+          "side": "DEFENSE",
+          "contact": {
+            "email": "fredburnside@dwt.com",
+            "phone": "(206) 757-8016",
+            "raw": "Davis Wright Tremaine LLP\n50 California Street\nSte 23rd Floor\nSan Francisco, CA 94111\n206-757-8016\nEmail: fredburnside@dwt.com\n"
+          },
+          "entryCount": 50,
+          "newestEntry": "2026-05-08",
+          "discoverySignals": [
+            "scheduling order",
+            "protective order",
+            "discovery"
+          ],
+          "windingDown": false,
+          "stateExit": null,
+          "lastSeen": "2026-05-26T01:31:33.373Z"
+        },
+        "72302551": {
+          "docket_id": 72302551,
+          "caseName": "Phlaum, et al. v. Navy Federal Credit Union, et al.",
+          "court": "ca9",
+          "jurisdiction": "federal",
+          "dateFiled": "2025-11-07",
+          "side": "DEFENSE",
+          "contact": {
+            "email": "fredburnside@dwt.com",
+            "phone": null,
+            "raw": "Email: fredburnside@dwt.com\nDavis Wright Tremaine, LLP\n920 5th Avenue\nSuite 3300\nSeattle, WA 98104-1610"
+          },
+          "entryCount": 26,
+          "newestEntry": "2026-04-23",
+          "discoverySignals": [],
+          "windingDown": false,
+          "stateExit": null,
+          "lastSeen": "2026-05-26T01:32:23.628Z"
+        },
+        "72829028": {
+          "docket_id": 72829028,
+          "caseName": "Seong v. Unlock Partnership Solutions Inc",
+          "court": "wawd",
+          "jurisdiction": "federal",
+          "dateFiled": "2026-03-25",
+          "side": "DEFENSE",
+          "contact": {
+            "email": "fredburnside@dwt.com",
+            "phone": "(206) 622-3150",
+            "raw": "DAVIS WRIGHT TREMAINE (SEA)\n920 FIFTH AVE\nSTE 3300\nSEATTLE, WA 98104-1610\n206-622-3150\nFax: 206-757-7700\nEmail: fredburnside@dwt.com\n"
+          },
+          "entryCount": 22,
+          "newestEntry": "2026-05-13",
+          "discoverySignals": [
+            "motion to compel"
+          ],
+          "windingDown": false,
+          "stateExit": null,
+          "lastSeen": "2026-05-26T01:30:39.643Z"
+        }
+      },
+      "triggers": [
+        {
+          "type": "NEW_DEFENSE_MATTER",
+          "docket_id": 72829028,
+          "caseName": "Seong v. Unlock Partnership Solutions Inc",
+          "court": "wawd",
+          "detectedAt": "2026-05-26T01:30:39.653Z",
+          "outreachAngle": "Fred B. Burnside newly appears as defense counsel on Seong v. Unlock Partnership Solutions Inc (wawd). New defense matter → eDiscovery + document-review need before vendor selection (typically 30-60 days post-filing).",
+          "evidence": {
+            "email": "fredburnside@dwt.com",
+            "phone": "(206) 622-3150",
+            "raw": "DAVIS WRIGHT TREMAINE (SEA)\n920 FIFTH AVE\nSTE 3300\nSEATTLE, WA 98104-1610\n206-622-3150\nFax: 206-757-7700\nEmail: fredburnside@dwt.com\n"
+          }
+        },
+        {
+          "type": "NEW_DEFENSE_MATTER",
+          "docket_id": 72213354,
+          "caseName": "Fons v. Grocery Outlet, Inc.",
+          "court": "cand",
+          "detectedAt": "2026-05-26T01:31:33.373Z",
+          "outreachAngle": "Fred B. Burnside newly appears as defense counsel on Fons v. Grocery Outlet, Inc. (cand). New defense matter → eDiscovery + document-review need before vendor selection (typically 30-60 days post-filing).",
+          "evidence": {
+            "email": "fredburnside@dwt.com",
+            "phone": "(206) 757-8016",
+            "raw": "Davis Wright Tremaine LLP\n50 California Street\nSte 23rd Floor\nSan Francisco, CA 94111\n206-757-8016\nEmail: fredburnside@dwt.com\n"
+          }
+        },
+        {
+          "type": "ENTERED_DISCOVERY",
+          "docket_id": 72213354,
+          "caseName": "Fons v. Grocery Outlet, Inc.",
+          "court": "cand",
+          "detectedAt": "2026-05-26T01:31:33.373Z",
+          "signals": [
+            "scheduling order",
+            "protective order",
+            "discovery"
+          ],
+          "outreachAngle": "Fons v. Grocery Outlet, Inc. (defended by Fred B. Burnside) shows discovery activity [scheduling order, protective order, discovery]. Discovery = active eDiscovery + review demand now.",
+          "evidence": {
+            "topDescriptions": [
+              {
+                "date": "2026-05-08",
+                "text": "TRANSCRIPT ORDER for proceedings held on April 2, 2026 before Judge Beth Labson Freeman by Grocery Outlet, Inc., for Recorded Proceeding - San Jose. (Accorsi, S"
+              },
+              {
+                "date": "2026-05-06",
+                "text": "Transcript of Proceedings held on 04/02/26, before Judge Beth Labson Freeman. Court Reporter/Transcriber Echo Reporting, Inc., telephone number echoreporting@ya"
+              },
+              {
+                "date": "2026-05-05",
+                "text": "STIPULATED PROTECTIVE ORDER; Granting 27 . Signed by Judge Nathanael M. Cousins on 5/5/2026. (lmh, COURT STAFF) (Filed on 5/5/2026) (Entered: 05/05/2026)"
+              },
+              {
+                "date": "2026-05-05",
+                "text": "STIPULATED ORDER Regarding Discovery of Electronically Stored Information; Granting 28 . Signed by Judge Nathanael M. Cousins. (lmh, COURT STAFF) (Filed on 5/5/"
+              },
+              {
+                "date": "2026-04-30",
+                "text": "STIPULATION WITH PROPOSED ORDER to Set Briefing Schedule for Motion to Dismiss Complaint filed by Grocery Outlet, Inc.. (Burnside, Frederick) (Filed on 4/30/202"
+              }
+            ]
+          }
+        },
+        {
+          "type": "NEW_DEFENSE_MATTER",
+          "docket_id": 72302551,
+          "caseName": "Phlaum, et al. v. Navy Federal Credit Union, et al.",
+          "court": "ca9",
+          "detectedAt": "2026-05-26T01:32:23.628Z",
+          "outreachAngle": "Fred B. Burnside newly appears as defense counsel on Phlaum, et al. v. Navy Federal Credit Union, et al. (ca9). New defense matter → eDiscovery + document-review need before vendor selection (typically 30-60 days post-filing).",
+          "evidence": {
+            "email": "fredburnside@dwt.com",
+            "phone": null,
+            "raw": "Email: fredburnside@dwt.com\nDavis Wright Tremaine, LLP\n920 5th Avenue\nSuite 3300\nSeattle, WA 98104-1610"
+          }
+        },
+        {
+          "type": "NEW_DEFENSE_MATTER",
+          "docket_id": 69545256,
+          "caseName": "In re Microsoft Browser Extension Litigation",
+          "court": "wawd",
+          "detectedAt": "2026-05-26T01:34:50.523Z",
+          "outreachAngle": "Fred B. Burnside newly appears as defense counsel on In re Microsoft Browser Extension Litigation (wawd). New defense matter → eDiscovery + document-review need before vendor selection (typically 30-60 days post-filing).",
+          "evidence": {
+            "email": "fredburnside@dwt.com",
+            "phone": "(206) 622-3150",
+            "raw": "DAVIS WRIGHT TREMAINE (SEA)\n920 FIFTH AVE\nSTE 3300\nSEATTLE, WA 98104-1610\n206-622-3150\nFax: 206-757-7700\nEmail: fredburnside@dwt.com\n"
+          }
+        },
+        {
+          "type": "NEW_DEFENSE_MATTER",
+          "docket_id": 69206024,
+          "caseName": "Demario Preston v. Navy Federal Credit Union",
+          "court": "cacd",
+          "detectedAt": "2026-05-26T01:36:17.758Z",
+          "outreachAngle": "Fred B. Burnside newly appears as defense counsel on Demario Preston v. Navy Federal Credit Union (cacd). New defense matter → eDiscovery + document-review need before vendor selection (typically 30-60 days post-filing).",
+          "evidence": {
+            "email": "fredburnside@dwt.com",
+            "phone": "(213) 633-6800",
+            "raw": "Davis Wright Tremaine LLP\n865 South Figueroa Street, 24th Floor\nLos Angeles, CA 90017-2566\n213-633-6800\nFax: 213-633-6899\nEmail: fredburnside@dwt.com\n"
+          }
+        }
+      ]
+    },
+    "maguire-robert-dwt": {
+      "profile": {
+        "id": "maguire-robert-dwt",
+        "name": "Robert J. Maguire",
+        "nameVariants": [
+          "Maguire",
+          "Robert Maguire",
+          "Rob Maguire"
+        ],
+        "firm": "Davis Wright Tremaine",
+        "city": "Seattle",
+        "tier": "partner",
+        "active": true
+      },
+      "cases": {
+        "69827831": {
+          "docket_id": 69827831,
+          "caseName": "AQR Arbitrage LLC v. Nordstrom Inc",
+          "court": "wawd",
+          "jurisdiction": "federal",
+          "dateFiled": "2025-03-31",
+          "side": "DEFENSE",
+          "contact": {
+            "email": "robmaguire@dwt.com",
+            "phone": "(206) 622-3150",
+            "raw": "DAVIS WRIGHT TREMAINE (SEA)\n920 FIFTH AVE\nSTE 3300\nSEATTLE, WA 98104-1610\n206-622-3150\nFax: 206-757-7700\nEmail: robmaguire@dwt.com\n"
+          },
+          "entryCount": 124,
+          "newestEntry": "2025-09-12",
+          "discoverySignals": [],
+          "windingDown": true,
+          "stateExit": null,
+          "lastSeen": "2026-05-26T02:06:18.986Z"
+        }
+      },
+      "triggers": []
+    },
+    "rummage-stephen-dwt": {
+      "profile": {
+        "id": "rummage-stephen-dwt",
+        "name": "Stephen M. Rummage",
+        "nameVariants": [
+          "Rummage",
+          "Stephen Rummage",
+          "Steve Rummage"
+        ],
+        "firm": "Davis Wright Tremaine",
+        "city": "Seattle",
+        "tier": "partner",
+        "active": true
+      },
+      "cases": {
+        "60084714": {
+          "docket_id": 60084714,
+          "caseName": "Hogan v. Amazon.com Inc",
+          "court": "wawd",
+          "jurisdiction": "federal",
+          "dateFiled": "2021-07-26",
+          "side": "DEFENSE",
+          "contact": {
+            "email": "steverummage@dwt.com",
+            "phone": "(206) 622-3150",
+            "raw": "DAVIS WRIGHT TREMAINE (SEA)\n920 FIFTH AVE\nSTE 3300\nSEATTLE, WA 98104-1610\n206-622-3150\nFax: 206-757-7700\nEmail: steverummage@dwt.com\n"
+          },
+          "entryCount": 84,
+          "newestEntry": "2025-04-11",
+          "discoverySignals": [],
+          "windingDown": false,
+          "stateExit": null,
+          "lastSeen": "2026-05-26T02:16:58.393Z"
+        },
+        "60092070": {
+          "docket_id": 60092070,
+          "caseName": "Seberson v. Amazon.com Inc",
+          "court": "wawd",
+          "jurisdiction": "federal",
+          "dateFiled": "2021-07-28",
+          "side": "DEFENSE",
+          "contact": {
+            "email": "steverummage@dwt.com",
+            "phone": "(206) 622-3150",
+            "raw": "DAVIS WRIGHT TREMAINE (SEA)\n920 FIFTH AVE\nSTE 3300\nSEATTLE, WA 98104-1610\n206-622-3150\nFax: 206-757-7700\nEmail: steverummage@dwt.com\n"
+          },
+          "entryCount": 15,
+          "newestEntry": "2021-09-01",
+          "discoverySignals": [],
+          "windingDown": false,
+          "stateExit": null,
+          "lastSeen": "2026-05-26T02:16:19.453Z"
+        },
+        "63387893": {
+          "docket_id": 63387893,
+          "caseName": "Garcia Moreno v. T-Mobile USA Inc",
+          "court": "wawd",
+          "jurisdiction": "federal",
+          "dateFiled": "2022-06-15",
+          "side": "DEFENSE",
+          "contact": {
+            "email": "steverummage@dwt.com",
+            "phone": "(206) 622-3150",
+            "raw": "DAVIS WRIGHT TREMAINE (SEA)\n920 FIFTH AVE\nSTE 3300\nSEATTLE, WA 98104-1610\n206-622-3150\nFax: 206-757-7700\nEmail: steverummage@dwt.com\n"
+          },
+          "entryCount": 30,
+          "newestEntry": "2025-03-11",
+          "discoverySignals": [
+            "motion to compel"
+          ],
+          "windingDown": true,
+          "stateExit": null,
+          "lastSeen": "2026-05-26T02:15:13.197Z"
+        },
+        "66676241": {
+          "docket_id": 66676241,
+          "caseName": "Bennett v. T-Mobile USA Inc",
+          "court": "wawd",
+          "jurisdiction": "federal",
+          "dateFiled": "2022-12-21",
+          "side": "DEFENSE",
+          "contact": {
+            "email": "steverummage@dwt.com",
+            "phone": "(206) 622-3150",
+            "raw": "DAVIS WRIGHT TREMAINE (SEA)\n920 FIFTH AVE\nSTE 3300\nSEATTLE, WA 98104-1610\n206-622-3150\nFax: 206-757-7700\nEmail: steverummage@dwt.com\n"
+          },
+          "entryCount": 56,
+          "newestEntry": "2025-09-19",
+          "discoverySignals": [
+            "motion to compel"
+          ],
+          "windingDown": true,
+          "stateExit": null,
+          "lastSeen": "2026-05-26T02:14:07.582Z"
+        },
+        "66899952": {
+          "docket_id": 66899952,
+          "caseName": "Bayani v. T-Mobile USA Inc",
+          "court": "wawd",
+          "jurisdiction": "federal",
+          "dateFiled": "2023-02-27",
+          "side": "DEFENSE",
+          "contact": {
+            "email": "steverummage@dwt.com",
+            "phone": "(206) 622-3150",
+            "raw": "DAVIS WRIGHT TREMAINE (SEA)\n920 FIFTH AVE\nSTE 3300\nSEATTLE, WA 98104-1610\n206-622-3150\nFax: 206-757-7700\nEmail: steverummage@dwt.com\n"
+          },
+          "entryCount": 53,
+          "newestEntry": "2024-10-17",
+          "discoverySignals": [
+            "discovery plan",
+            "protective order",
+            "discovery"
+          ],
+          "windingDown": true,
+          "stateExit": null,
+          "lastSeen": "2026-05-26T02:13:28.554Z"
+        },
+        "67628754": {
+          "docket_id": 67628754,
+          "caseName": "Saeedy v. Microsoft Corporation",
+          "court": "wawd",
+          "jurisdiction": "federal",
+          "dateFiled": "2023-07-21",
+          "side": "DEFENSE",
+          "contact": {
+            "email": "steverummage@dwt.com",
+            "phone": "(206) 622-3150",
+            "raw": "DAVIS WRIGHT TREMAINE (SEA)\n920 FIFTH AVE\nSTE 3300\nSEATTLE, WA 98104-1610\n206-622-3150\nFax: 206-757-7700\nEmail: steverummage@dwt.com\n"
+          },
+          "entryCount": 59,
+          "newestEntry": "2024-01-25",
+          "discoverySignals": [
+            "discovery"
+          ],
+          "windingDown": true,
+          "stateExit": null,
+          "lastSeen": "2026-05-26T02:12:38.569Z"
+        }
+      },
+      "triggers": [
+        {
+          "type": "NEW_DEFENSE_MATTER",
+          "docket_id": 60092070,
+          "caseName": "Seberson v. Amazon.com Inc",
+          "court": "wawd",
+          "detectedAt": "2026-05-26T02:16:19.454Z",
+          "outreachAngle": "Stephen M. Rummage newly appears as defense counsel on Seberson v. Amazon.com Inc (wawd). New defense matter → eDiscovery + document-review need before vendor selection (typically 30-60 days post-filing).",
+          "evidence": {
+            "email": "steverummage@dwt.com",
+            "phone": "(206) 622-3150",
+            "raw": "DAVIS WRIGHT TREMAINE (SEA)\n920 FIFTH AVE\nSTE 3300\nSEATTLE, WA 98104-1610\n206-622-3150\nFax: 206-757-7700\nEmail: steverummage@dwt.com\n"
+          }
+        },
+        {
+          "type": "NEW_DEFENSE_MATTER",
+          "docket_id": 60084714,
+          "caseName": "Hogan v. Amazon.com Inc",
+          "court": "wawd",
+          "detectedAt": "2026-05-26T02:16:58.393Z",
+          "outreachAngle": "Stephen M. Rummage newly appears as defense counsel on Hogan v. Amazon.com Inc (wawd). New defense matter → eDiscovery + document-review need before vendor selection (typically 30-60 days post-filing).",
+          "evidence": {
+            "email": "steverummage@dwt.com",
+            "phone": "(206) 622-3150",
+            "raw": "DAVIS WRIGHT TREMAINE (SEA)\n920 FIFTH AVE\nSTE 3300\nSEATTLE, WA 98104-1610\n206-622-3150\nFax: 206-757-7700\nEmail: steverummage@dwt.com\n"
+          }
+        }
+      ]
+    },
+    "kramer-kevin-dwt": {
+      "profile": {
+        "id": "kramer-kevin-dwt",
+        "name": "Kevin Kramer",
+        "nameVariants": [
+          "Kramer",
+          "Kevin Kramer"
+        ],
+        "firm": "Davis Wright Tremaine",
+        "city": "Seattle",
+        "tier": "partner",
+        "active": true
+      },
+      "cases": {},
+      "triggers": []
+    },
+    "parris-mark-orrick": {
+      "profile": {
+        "id": "parris-mark-orrick",
+        "name": "Mark S. Parris",
+        "nameVariants": [
+          "Parris",
+          "Mark Parris"
+        ],
+        "firm": "Orrick",
+        "city": "Seattle",
+        "tier": "partner",
+        "active": true
+      },
+      "cases": {},
+      "triggers": []
+    },
+    "swaminathan-aravind-orrick": {
+      "profile": {
+        "id": "swaminathan-aravind-orrick",
+        "name": "Aravind Swaminathan",
+        "nameVariants": [
+          "Swaminathan",
+          "Aravind Swaminathan"
+        ],
+        "firm": "Orrick",
+        "city": "Seattle",
+        "tier": "partner",
+        "active": true
+      },
+      "cases": {
+        "69248139": {
+          "docket_id": 69248139,
+          "caseName": "Rebeka Rodriguez v. Autotrader.com, Inc.",
+          "court": "cacd",
+          "jurisdiction": "federal",
+          "dateFiled": "2024-10-10",
+          "side": "DEFENSE",
+          "contact": {
+            "email": "aswaminathan@orrick.com",
+            "phone": "(206) 839-4340",
+            "raw": "Orrick Herrington and Sutcliffe LLP\n401 Union Street, Suite 3300\nSeattle, WA 98101\n206-839-4340\nFax: 206-839-4301\nEmail: aswaminathan@orrick.com\n"
+          },
+          "entryCount": 63,
+          "newestEntry": "2025-04-04",
+          "discoverySignals": [],
+          "windingDown": false,
+          "stateExit": null,
+          "lastSeen": "2026-05-26T02:38:41.925Z"
+        },
+        "69272596": {
+          "docket_id": 69272596,
+          "caseName": "Bennett v. Evolve Bank & Trust",
+          "court": "tnwd",
+          "jurisdiction": "federal",
+          "dateFiled": "2024-10-17",
+          "side": "DEFENSE",
+          "contact": {
+            "email": "aswaminathan@orrick.com",
+            "phone": "(206) 839-4300",
+            "raw": "ORRICK, HERRINGTON & SUTCLIFFE LLP\n401 Union Street\nSuite 3300\nSeattle, WA 98101\n206-839-4300\nEmail: aswaminathan@orrick.com\n"
+          },
+          "entryCount": 58,
+          "newestEntry": "2025-12-15",
+          "discoverySignals": [],
+          "windingDown": false,
+          "stateExit": null,
+          "lastSeen": "2026-05-26T02:37:25.780Z"
+        },
+        "69273045": {
+          "docket_id": 69273045,
+          "caseName": "Faulkner v. Branch Messenger Inc",
+          "court": "tnwd",
+          "jurisdiction": "federal",
+          "dateFiled": "2024-10-17",
+          "side": "DEFENSE",
+          "contact": {
+            "email": "aswaminathan@orrick.com",
+            "phone": "(206) 839-4300",
+            "raw": "ORRICK, HERRINGTON & SUTCLIFFE LLP\n401 Union Street\nSuite 3300\nSeattle, WA 98101\n206-839-4300\nEmail: aswaminathan@orrick.com\n"
+          },
+          "entryCount": 0,
+          "newestEntry": null,
+          "discoverySignals": [],
+          "windingDown": false,
+          "stateExit": null,
+          "lastSeen": "2026-05-26T02:35:59.833Z"
+        },
+        "69273049": {
+          "docket_id": 69273049,
+          "caseName": "Dubray v. Evolve Bank & Trust",
+          "court": "tnwd",
+          "jurisdiction": "federal",
+          "dateFiled": "2024-10-17",
+          "side": "DEFENSE",
+          "contact": {
+            "email": "aswaminathan@orrick.com",
+            "phone": "(206) 839-4300",
+            "raw": "ORRICK, HERRINGTON & SUTCLIFFE LLP\n401 Union Street\nSuite 3300\nSeattle, WA 98101\n206-839-4300\nEmail: aswaminathan@orrick.com\n"
+          },
+          "entryCount": 56,
+          "newestEntry": "2025-12-15",
+          "discoverySignals": [],
+          "windingDown": false,
+          "stateExit": null,
+          "lastSeen": "2026-05-26T02:34:23.977Z"
+        },
+        "69341575": {
+          "docket_id": 69341575,
+          "caseName": "Bynoe v. Evolve Bank & Trust",
+          "court": "tnwd",
+          "jurisdiction": "federal",
+          "dateFiled": "2024-11-04",
+          "side": "DEFENSE",
+          "contact": {
+            "email": "aswaminathan@orrick.com",
+            "phone": "(206) 839-4300",
+            "raw": "ORRICK, HERRINGTON & SUTCLIFFE LLP\n401 Union Street\nSuite 3300\nSeattle, WA 98101\n206-839-4300\nEmail: aswaminathan@orrick.com\n"
+          },
+          "entryCount": 56,
+          "newestEntry": "2025-12-15",
+          "discoverySignals": [],
+          "windingDown": true,
+          "stateExit": null,
+          "lastSeen": "2026-05-26T02:32:27.861Z"
+        },
+        "70634408": {
+          "docket_id": 70634408,
+          "caseName": "Allison v. PHH Mortgage",
+          "court": "cand",
+          "jurisdiction": "federal",
+          "dateFiled": "2025-06-25",
+          "side": "DEFENSE",
+          "contact": {
+            "email": "aswaminathan@orrick.com",
+            "phone": "(206) 839-4300",
+            "raw": "Orrick, Herrington & Sutcliffe LLP\n401 Union Street\nSuite 3300\nSeattle, WA 98101\n206-839-4300\nEmail: aswaminathan@orrick.com\n"
+          },
+          "entryCount": 64,
+          "newestEntry": "2026-05-14",
+          "discoverySignals": [
+            "protective order"
+          ],
+          "windingDown": false,
+          "stateExit": null,
+          "lastSeen": "2026-05-26T02:30:42.618Z"
+        },
+        "73129103": {
+          "docket_id": 73129103,
+          "caseName": "Deboni v. Mercor.io Corporation",
+          "court": "cand",
+          "jurisdiction": "federal",
+          "dateFiled": "2026-04-01",
+          "side": "DEFENSE",
+          "contact": {
+            "email": "aswaminathan@orrick.com",
+            "phone": "(206) 839-4300",
+            "raw": "Orrick, Herrington & Sutcliffe LLP\n401 Union Street\nSuite 3300\nSeattle, WA 98101\n206-839-4300\nEmail: aswaminathan@orrick.com\n"
+          },
+          "entryCount": 0,
+          "newestEntry": null,
+          "discoverySignals": [],
+          "windingDown": false,
+          "stateExit": null,
+          "lastSeen": "2026-05-26T02:29:25.516Z"
+        },
+        "73249498": {
+          "docket_id": 73249498,
+          "caseName": "Henderson v. Cox Enterprises, Inc.",
+          "court": "gand",
+          "jurisdiction": "federal",
+          "dateFiled": "2026-04-24",
+          "side": "DEFENSE",
+          "contact": {
+            "email": "aswaminathan@orrick.com",
+            "phone": "(206) 839-4300",
+            "raw": "Orrick Herrington & Sutcliffe LLP\n401 Union Street\nSUite 3300\nSeattle, WA 98101\n206-839-4300\nEmail: aswaminathan@orrick.com\n"
+          },
+          "entryCount": 20,
+          "newestEntry": "2026-05-08",
+          "discoverySignals": [],
+          "windingDown": false,
+          "stateExit": null,
+          "lastSeen": "2026-05-26T02:28:17.095Z"
+        }
+      },
+      "triggers": [
+        {
+          "type": "NEW_DEFENSE_MATTER",
+          "docket_id": 73249498,
+          "caseName": "Henderson v. Cox Enterprises, Inc.",
+          "court": "gand",
+          "detectedAt": "2026-05-26T02:28:17.098Z",
+          "outreachAngle": "Aravind Swaminathan newly appears as defense counsel on Henderson v. Cox Enterprises, Inc. (gand). New defense matter → eDiscovery + document-review need before vendor selection (typically 30-60 days post-filing).",
+          "evidence": {
+            "email": "aswaminathan@orrick.com",
+            "phone": "(206) 839-4300",
+            "raw": "Orrick Herrington & Sutcliffe LLP\n401 Union Street\nSUite 3300\nSeattle, WA 98101\n206-839-4300\nEmail: aswaminathan@orrick.com\n"
+          }
+        },
+        {
+          "type": "NEW_DEFENSE_MATTER",
+          "docket_id": 73129103,
+          "caseName": "Deboni v. Mercor.io Corporation",
+          "court": "cand",
+          "detectedAt": "2026-05-26T02:29:25.518Z",
+          "outreachAngle": "Aravind Swaminathan newly appears as defense counsel on Deboni v. Mercor.io Corporation (cand). New defense matter → eDiscovery + document-review need before vendor selection (typically 30-60 days post-filing).",
+          "evidence": {
+            "email": "aswaminathan@orrick.com",
+            "phone": "(206) 839-4300",
+            "raw": "Orrick, Herrington & Sutcliffe LLP\n401 Union Street\nSuite 3300\nSeattle, WA 98101\n206-839-4300\nEmail: aswaminathan@orrick.com\n"
+          }
+        },
+        {
+          "type": "NEW_DEFENSE_MATTER",
+          "docket_id": 70634408,
+          "caseName": "Allison v. PHH Mortgage",
+          "court": "cand",
+          "detectedAt": "2026-05-26T02:30:42.619Z",
+          "outreachAngle": "Aravind Swaminathan newly appears as defense counsel on Allison v. PHH Mortgage (cand). New defense matter → eDiscovery + document-review need before vendor selection (typically 30-60 days post-filing).",
+          "evidence": {
+            "email": "aswaminathan@orrick.com",
+            "phone": "(206) 839-4300",
+            "raw": "Orrick, Herrington & Sutcliffe LLP\n401 Union Street\nSuite 3300\nSeattle, WA 98101\n206-839-4300\nEmail: aswaminathan@orrick.com\n"
+          }
+        },
+        {
+          "type": "NEW_DEFENSE_MATTER",
+          "docket_id": 69273049,
+          "caseName": "Dubray v. Evolve Bank & Trust",
+          "court": "tnwd",
+          "detectedAt": "2026-05-26T02:34:23.978Z",
+          "outreachAngle": "Aravind Swaminathan newly appears as defense counsel on Dubray v. Evolve Bank & Trust (tnwd). New defense matter → eDiscovery + document-review need before vendor selection (typically 30-60 days post-filing).",
+          "evidence": {
+            "email": "aswaminathan@orrick.com",
+            "phone": "(206) 839-4300",
+            "raw": "ORRICK, HERRINGTON & SUTCLIFFE LLP\n401 Union Street\nSuite 3300\nSeattle, WA 98101\n206-839-4300\nEmail: aswaminathan@orrick.com\n"
+          }
+        },
+        {
+          "type": "NEW_DEFENSE_MATTER",
+          "docket_id": 69273045,
+          "caseName": "Faulkner v. Branch Messenger Inc",
+          "court": "tnwd",
+          "detectedAt": "2026-05-26T02:35:59.834Z",
+          "outreachAngle": "Aravind Swaminathan newly appears as defense counsel on Faulkner v. Branch Messenger Inc (tnwd). New defense matter → eDiscovery + document-review need before vendor selection (typically 30-60 days post-filing).",
+          "evidence": {
+            "email": "aswaminathan@orrick.com",
+            "phone": "(206) 839-4300",
+            "raw": "ORRICK, HERRINGTON & SUTCLIFFE LLP\n401 Union Street\nSuite 3300\nSeattle, WA 98101\n206-839-4300\nEmail: aswaminathan@orrick.com\n"
+          }
+        },
+        {
+          "type": "NEW_DEFENSE_MATTER",
+          "docket_id": 69272596,
+          "caseName": "Bennett v. Evolve Bank & Trust",
+          "court": "tnwd",
+          "detectedAt": "2026-05-26T02:37:25.781Z",
+          "outreachAngle": "Aravind Swaminathan newly appears as defense counsel on Bennett v. Evolve Bank & Trust (tnwd). New defense matter → eDiscovery + document-review need before vendor selection (typically 30-60 days post-filing).",
+          "evidence": {
+            "email": "aswaminathan@orrick.com",
+            "phone": "(206) 839-4300",
+            "raw": "ORRICK, HERRINGTON & SUTCLIFFE LLP\n401 Union Street\nSuite 3300\nSeattle, WA 98101\n206-839-4300\nEmail: aswaminathan@orrick.com\n"
+          }
+        },
+        {
+          "type": "NEW_DEFENSE_MATTER",
+          "docket_id": 69248139,
+          "caseName": "Rebeka Rodriguez v. Autotrader.com, Inc.",
+          "court": "cacd",
+          "detectedAt": "2026-05-26T02:38:41.926Z",
+          "outreachAngle": "Aravind Swaminathan newly appears as defense counsel on Rebeka Rodriguez v. Autotrader.com, Inc. (cacd). New defense matter → eDiscovery + document-review need before vendor selection (typically 30-60 days post-filing).",
+          "evidence": {
+            "email": "aswaminathan@orrick.com",
+            "phone": "(206) 839-4340",
+            "raw": "Orrick Herrington and Sutcliffe LLP\n401 Union Street, Suite 3300\nSeattle, WA 98101\n206-839-4340\nFax: 206-839-4301\nEmail: aswaminathan@orrick.com\n"
+          }
+        }
+      ]
+    },
+    "mike-devries-kirkland-ellis": {
+      "profile": {
+        "id": "mike-devries-kirkland-ellis",
+        "name": "Mike DeVries",
+        "nameVariants": [
+          "DeVries",
+          "Mike DeVries"
+        ],
+        "firm": "Kirkland Ellis",
+        "city": "Los Angeles",
+        "tier": "partner",
+        "active": true,
+        "source": "manual",
+        "addedAt": "2026-05-26T03:13:41.696Z"
+      },
+      "cases": {},
+      "triggers": []
+    }
+  },
+  "added": {
+    "mike-devries-kirkland-ellis": {
+      "id": "mike-devries-kirkland-ellis",
+      "name": "Mike DeVries",
+      "nameVariants": [
+        "DeVries",
+        "Mike DeVries"
+      ],
+      "firm": "Kirkland Ellis",
+      "city": "Los Angeles",
+      "tier": "partner",
+      "active": true,
+      "source": "manual",
+      "addedAt": "2026-05-26T03:13:41.696Z"
+    }
+  },
+  "lastChecked": {
+    "katsantonis-chris-dlapiper": "2026-05-26T01:25:41.575Z",
+    "tangri-ragesh-mofo": "2026-05-26T01:10:05.418Z",
+    "caplan-matthew-cooley": "2026-05-26T01:07:22.575Z",
+    "burnside-fred-dwt": "2026-05-26T01:38:51.151Z",
+    "maguire-robert-dwt": "2026-05-26T02:08:53.923Z",
+    "rummage-stephen-dwt": "2026-05-26T02:17:10.299Z",
+    "kramer-kevin-dwt": "2026-05-26T02:22:14.292Z",
+    "parris-mark-orrick": "2026-05-26T02:26:59.371Z",
+    "swaminathan-aravind-orrick": "2026-05-26T02:38:41.936Z",
+    "mike-devries-kirkland-ellis": "2026-05-26T03:19:20.285Z"
+  },
+  "counters": {
+    "2026-05-26": {
+      "adds": 1,
+      "immediateSearches": 2
+    }
+  },
+  "runs": [
+    {
+      "job": "partner_monitor",
+      "duration": 272,
+      "partners": 1,
+      "triggers": 0,
+      "summary": [
+        {
+          "partner": "mike-devries-kirkland-ellis",
+          "find": "ok",
+          "defenseCases": 0,
+          "triggers": 0
+        }
+      ],
+      "timestamp": "2026-05-26T03:19:20.290Z"
+    },
+    {
+      "job": "partner_monitor",
+      "duration": 261,
+      "partners": 1,
+      "triggers": 0,
+      "summary": [
+        {
+          "partner": "mike-devries-kirkland-ellis",
+          "find": "ok",
+          "defenseCases": 0,
+          "triggers": 0
+        }
+      ],
+      "timestamp": "2026-05-26T03:18:03.133Z"
+    },
+    {
+      "job": "partner_monitor",
+      "duration": 22,
+      "partners": 3,
+      "triggers": 0,
+      "summary": [
+        {
+          "partner": "katsantonis-chris-dlapiper",
+          "find": "ok",
+          "defenseCases": 1,
+          "triggers": 0
+        },
+        {
+          "partner": "tangri-ragesh-mofo",
+          "find": "ok",
+          "defenseCases": 1,
+          "triggers": 0
+        },
+        {
+          "partner": "caplan-matthew-cooley",
+          "find": "api_error",
+          "triggers": 0
+        }
+      ],
+      "timestamp": "2026-05-26T01:07:24.081Z"
+    },
+    {
+      "job": "partner_monitor",
+      "duration": 11,
+      "partners": 3,
+      "triggers": 0,
+      "summary": [
+        {
+          "partner": "katsantonis-chris-dlapiper",
+          "find": "ok",
+          "defenseCases": 1,
+          "triggers": 0
+        },
+        {
+          "partner": "tangri-ragesh-mofo",
+          "find": "ok",
+          "defenseCases": 1,
+          "triggers": 0
+        },
+        {
+          "partner": "caplan-matthew-cooley",
+          "find": "api_error",
+          "triggers": 0
+        }
+      ],
+      "timestamp": "2026-05-26T01:04:43.518Z"
+    }
+  ]
+}

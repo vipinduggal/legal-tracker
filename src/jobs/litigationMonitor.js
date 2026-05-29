@@ -314,16 +314,37 @@ function buildDiscoveryAlert(account, litigationItem, counselInfo) {
   const dates = (counselInfo?.key_dates || []).join(", ") || "No dates confirmed";
   const volume = estimateVolume(litigationItem.type);
 
+  // Counsel firms: prefer the list (all_counsel_firms) since outside_counsel_firm is often null.
+  const allFirms = Array.isArray(litigationItem.all_counsel_firms) ? litigationItem.all_counsel_firms : [];
+  // De-dup case-insensitively (data sometimes has "Dechert LLP" and "Dechert, LLP")
+  const seen = new Set();
+  const counselFirms = allFirms.filter(x => {
+    if (!x) return false;
+    const k = x.toLowerCase().replace(/[,.]/g, "").trim();
+    if (seen.has(k)) return false;
+    seen.add(k); return true;
+  });
+  const counselKnown = counselFirms.length > 0;
+  // Parties: shown as flat list. Filter the tracked client's own name out so the rest reads as "others involved".
+  const allParties = Array.isArray(litigationItem.parties) ? litigationItem.parties : [];
+  const acctLower = (account.name || "").toLowerCase();
+  const otherParties = allParties.filter(p => p && !p.toLowerCase().includes(acctLower));
+
   return {
     account_name: account.name,
+    case_name: litigationItem.case_name || null,
     case_type: litigationItem.type,
     case_phase: phase,
     is_in_discovery: counselInfo?.is_in_discovery || false,
     outside_counsel: firm,
+    counsel_firms: counselFirms,
+    counsel_known: counselKnown,
+    other_parties: otherParties,
+    courtlistener_url: litigationItem.courtlistener_url || null,
     key_dates: counselInfo?.key_dates || [],
     estimated_doc_volume: volume,
     discovery_signal: counselInfo?.discovery_signal,
-    case_number: counselInfo?.case_number,
+    case_number: counselInfo?.case_number || litigationItem.case_number || null,
     alert_type: counselInfo?.is_in_discovery ? "DISCOVERY_PHASE" : "ACTIVE_LITIGATION",
     consilio_opportunity: buildOpportunity(litigationItem.type, firm, volume, dates),
     source_url: litigationItem.source_url || null,
