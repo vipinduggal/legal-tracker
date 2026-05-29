@@ -35,21 +35,29 @@ const PLAINTIFF_FIRMS = [
   "consumer attorneys", "laffey leitner", "beasley allen", "rosen law",
   "karpf karpf", "the rosen law", "chimicles", "faruqi", "bronstein",
   "wolf haldenstein", "saxena white", "bottini & bottini",
+  "kilsheimer", "kirby mcinerney", "block & leviton", "kessler topaz",
+  "berger montague", "kessler", "abraham fruchter", "kahn swick",
+  "schubert jonckheer", "rigrodsky", "monteverde",
   // Copyright/IP plaintiff firms  
   "tousley", "cowan debaets", "hartline barger", "copyright",
+  "boies schiller", "susman godfrey",
   // Employment plaintiff firms
   "hawks quindel", "bryan schwartz", "outten & golden", "sanford heisler",
   "nichols kaster", "joseph & kirschenbaum", "virginia employment",
   "mixon law", "karpf", "consumer law",
   // Consumer/fraud plaintiff firms
   "doyle lowther", "blood hurst", "capstone law", "callahan & blaine",
-  "stevenson & keppelman", "siri glimstad",
+  "stevenson & keppelman", "siri glimstad", "migliaccio",
+  "law offices of david n lake", "edelson",
   // Mass tort plaintiff firms
   "arnold & itkin", "napoli shkolnik",
 ];
 
 // Known BigLaw defense firms — these almost always represent corporations
+// AmLaw 200 + adjacent national defense/BigLaw firms. Lowercase, fuzzy-substring matched.
+// Refresh annually when AmLaw publishes the new ranking.
 const BIGLAW_DEFENSE = [
+  // Top 50 — the original list, kept here
   "orrick", "perkins coie", "davis wright", "dechert", "kirkland",
   "paul weiss", "sullivan & cromwell", "skadden", "latham", "gibson dunn",
   "sidley austin", "jones day", "mayer brown", "willkie farr", "cooley",
@@ -58,6 +66,61 @@ const BIGLAW_DEFENSE = [
   "fish & richardson", "quinn emanuel", "irell & manella", "weil gotshal",
   "simpson thacher", "debevoise", "cahill gordon", "cravath",
   "milbank", "shearman", "freshfields", "linklaters", "allen & overy",
+  // AmLaw 51–100
+  "akin gump", "alston & bird", "arnold & porter", "ballard spahr",
+  "barnes & thornburg", "bryan cave", "buchanan ingersoll", "carlton fields",
+  "cozen o'connor", "crowell & moring", "duane morris", "epstein becker",
+  "faegre drinker", "finnegan", "foley & lardner", "foley hoag",
+  "fox rothschild", "fragomen", "fried frank", "gardere",
+  "goldberg segalla", "goodwin procter", "greenberg traurig", "haynes and boone",
+  "hogan & hartson", "holland & knight", "husch blackwell", "jackson lewis",
+  "k&l gates", "kasowitz", "katten muchin", "kilpatrick townsend",
+  "king & spalding", "littler mendelson", "locke lord", "loeb & loeb",
+  "manatt phelps", "mcdermott will", "mcguirewoods", "miller canfield",
+  "morgan lewis", "munger tolles", "nelson mullins", "nixon peabody",
+  "norton rose", "ogletree deakins", "polsinelli", "proskauer",
+  "reed smith", "ropes & gray", "saul ewing", "schulte roth",
+  "seyfarth shaw", "shearman & sterling", "sheppard mullin", "shook hardy",
+  "shumaker loop", "snell & wilmer", "squire patton boggs", "steptoe & johnson",
+  "stoel rives", "stradley ronon", "thompson coburn", "thompson hine",
+  "troutman pepper", "venable", "vinson & elkins", "wachtell",
+  "wiggin and dana", "wiley rein", "williams & connolly", "winston & strawn",
+  // AmLaw 101–200
+  "adams and reese", "akerman", "armstrong teasdale", "baker botts",
+  "baker hostetler", "baker mckenzie", "baker donelson", "bakerhostetler",
+  "ballard", "blank rome", "boies schiller flexner", "bradley arant",
+  "buchalter", "burns & levinson", "butler snow", "cadwalader",
+  "carmody torrance", "chapman and cutler", "clark hill", "cole schotz",
+  "constangy brooks", "cordell parvin", "cotton schmidt", "crowe & dunlevy",
+  "curtis mallet", "davis polk", "day pitney", "dechert llp",
+  "dentons", "dickinson wright", "dla piper", "dorsey & whitney",
+  "dykema", "eckert seamans", "fennemore craig", "ford harrison",
+  "frost brown todd", "gibson dunn & crutcher", "godfrey & kahn",
+  "gordon rees", "gordon arata", "graydon head", "greenberg glusker",
+  "gunderson dettmer", "hanson bridgett", "harris beach", "harter secrest",
+  "haynsworth sinkler", "herbert smith", "honigman", "hunton andrews",
+  "jackson kelly", "jackson walker", "jaffe raitt", "jenner & block",
+  "johnson & bell", "kelley drye", "kennedys", "kirton mcconkie",
+  "krieg devault", "kutak rock", "lewis brisbois", "lewis roca",
+  "lewis rice", "lindquist & vennum", "littler", "long & levit",
+  "lowenstein sandler", "macdonald devin", "mcdonald hopkins",
+  "mintz levin", "moore & van allen", "morris james", "morris manning",
+  "morris nichols", "moses & singer", "moss adams", "munsch hardt",
+  "nutter mcclennen", "obermayer rebmann", "ogletree", "olshan frome",
+  "patterson belknap", "peabody & arnold", "perkins coie llp",
+  "phelps dunbar", "phillips lytle", "phillips nizer", "pillsbury winthrop",
+  "porter wright", "potter anderson", "richards layton", "riker danzig",
+  "roetzel & andress", "rumberger kirk", "saul ewing arnstein",
+  "saunders & silverstein", "schiff hardin", "schwabe williamson",
+  "shipman & goodwin", "sills cummis", "smith gambrell",
+  "spencer fane", "spilman thomas", "stinson", "stites & harbison",
+  "stoll keenon", "stradling yocca", "strasburger & price",
+  "sullivan & worcester", "taft stettinius", "thompson & knight",
+  "trenam law", "tucker arensberg", "tucker ellis",
+  "varnum", "warner norcross", "waller lansden", "weintraub tobin",
+  "white and williams", "wilentz", "williams kastner", "williams mullen",
+  "wilmer cutler pickering", "wilmerhale", "winstead",
+  "womble bond dickinson", "young conaway",
 ];
 
 function isDefenseFirm(firmName) {
