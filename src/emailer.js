@@ -125,10 +125,9 @@ export async function sendLitigationAlertEmail(alerts) {
     </div>
     <div style="background:#f8f9fa;padding:20px;border-radius:0 0 8px 8px">
       ${alerts.map(a => {
-        const counsel = (a.counsel_firms && a.counsel_firms.length)
-          ? a.counsel_firms.join(", ")
-          : (a.outside_counsel && a.outside_counsel !== "Unknown firm" ? a.outside_counsel : null);
-        const counselKnown = !!counsel;
+        const defense = (a.defense_firms || []);
+        const plaintiff = (a.plaintiff_firms || []);
+        const other = (a.unclassified_firms || []);
         const parties = (a.other_parties && a.other_parties.length)
           ? (a.other_parties.length > 8
               ? a.other_parties.slice(0, 8).join(", ") + ` (+${a.other_parties.length - 8} more)`
@@ -139,15 +138,21 @@ export async function sendLitigationAlertEmail(alerts) {
         const linkHtml = a.courtlistener_url
           ? `<a href="${a.courtlistener_url}" style="color:#1B3A5C;font-size:12px">View docket &raquo;</a>`
           : "";
+        const counselBlock =
+          (defense.length
+            ? `<div style="font-size:13px;margin-bottom:3px"><strong style="color:#166534">Defense counsel:</strong> ${defense.join(", ")}</div>`
+            : `<div style="font-size:13px;margin-bottom:3px"><strong style="color:#166534">Defense counsel:</strong> <span style="color:#B45309;background:#FEF3C7;padding:1px 6px;border-radius:3px">Unknown — verify before outreach</span></div>`) +
+          (plaintiff.length
+            ? `<div style="font-size:13px;margin-bottom:3px"><strong style="color:#991B1B">Plaintiff counsel:</strong> ${plaintiff.join(", ")}</div>`
+            : "") +
+          (other.length
+            ? `<div style="font-size:13px;margin-bottom:3px"><strong style="color:#6B7280">Other counsel on case:</strong> <span style="color:#6B7280">${other.join(", ")}</span></div>`
+            : "");
         return `<div style="border:1px solid #FCA5A5;background:#FEF2F2;border-left:4px solid #DC2626;border-radius:6px;padding:14px;margin-bottom:12px">
         <div style="font-weight:bold;color:#1B3A5C">${title}</div>
         <div style="color:#666;font-size:12px;margin-bottom:6px">${a.account_name}${caseNo}</div>
-        ${parties ? `<div style="color:#555;font-size:13px;margin-bottom:4px"><strong>Parties involved:</strong> ${parties}</div>` : ""}
-        <div style="color:#555;font-size:13px;margin-bottom:6px"><strong>Counsel on case:</strong> ${
-          counselKnown
-            ? counsel
-            : `<span style="color:#B45309;background:#FEF3C7;padding:1px 6px;border-radius:3px">Counsel unknown — verify before outreach</span>`
-        }</div>
+        ${parties ? `<div style="color:#555;font-size:13px;margin-bottom:6px"><strong>Parties involved:</strong> ${parties}</div>` : ""}
+        <div style="margin-bottom:6px">${counselBlock}</div>
         <div style="color:#0E7C6E;font-size:13px;margin-top:6px">${a.consilio_opportunity}</div>
         ${linkHtml ? `<div style="margin-top:6px">${linkHtml}</div>` : ""}
       </div>`;}).join("")}

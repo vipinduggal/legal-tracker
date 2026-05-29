@@ -314,17 +314,24 @@ function buildDiscoveryAlert(account, litigationItem, counselInfo) {
   const dates = (counselInfo?.key_dates || []).join(", ") || "No dates confirmed";
   const volume = estimateVolume(litigationItem.type);
 
-  // Counsel firms: prefer the list (all_counsel_firms) since outside_counsel_firm is often null.
-  const allFirms = Array.isArray(litigationItem.all_counsel_firms) ? litigationItem.all_counsel_firms : [];
-  // De-dup case-insensitively (data sometimes has "Dechert LLP" and "Dechert, LLP")
-  const seen = new Set();
-  const counselFirms = allFirms.filter(x => {
-    if (!x) return false;
-    const k = x.toLowerCase().replace(/[,.]/g, "").trim();
-    if (seen.has(k)) return false;
-    seen.add(k); return true;
-  });
-  const counselKnown = counselFirms.length > 0;
+  // Three counsel buckets, classified by courtListenerMonitor's lists.
+  // De-dup case-insensitively (data sometimes has "Dechert LLP" and "Dechert, LLP").
+  const dedup = (arr) => {
+    const seen = new Set();
+    return (Array.isArray(arr) ? arr : []).filter(x => {
+      if (!x) return false;
+      const k = x.toLowerCase().replace(/[,.]/g, "").trim();
+      if (seen.has(k)) return false;
+      seen.add(k); return true;
+    });
+  };
+  const defenseFirms = dedup(litigationItem.all_counsel_firms);
+  const plaintiffFirms = dedup(litigationItem.plaintiff_counsel);
+  const unclassifiedFirms = dedup(litigationItem.unclassified_counsel);
+  // "counselKnown" now means: we have at least one *defense* firm identified.
+  const counselKnown = defenseFirms.length > 0;
+  // counselFirms kept for any old code path that reads it (back-compat).
+  const counselFirms = defenseFirms;
   // Parties: shown as flat list. Filter the tracked client's own name out so the rest reads as "others involved".
   const allParties = Array.isArray(litigationItem.parties) ? litigationItem.parties : [];
   const acctLower = (account.name || "").toLowerCase();
@@ -338,6 +345,9 @@ function buildDiscoveryAlert(account, litigationItem, counselInfo) {
     is_in_discovery: counselInfo?.is_in_discovery || false,
     outside_counsel: firm,
     counsel_firms: counselFirms,
+    defense_firms: defenseFirms,
+    plaintiff_firms: plaintiffFirms,
+    unclassified_firms: unclassifiedFirms,
     counsel_known: counselKnown,
     other_parties: otherParties,
     courtlistener_url: litigationItem.courtlistener_url || null,
