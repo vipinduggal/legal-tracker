@@ -123,10 +123,12 @@ function extractDefenseCounsel(attorneys, firms, parties, companyName, companyIs
   const knownPlaintiffFirms = validFirms.filter(f => isPlaintiffFirm(f));
   const unknownFirms = validFirms.filter(f => !isDefenseFirm(f) && !isPlaintiffFirm(f));
 
-  // Prefer known defense firms, fall back to unknown firms
-  const defenseFirms = knownDefenseFirms.length > 0
-    ? knownDefenseFirms
-    : unknownFirms; // unknown firms might be defense
+  // Only call something "defense" if we know it is.
+  // Never promote unknown firms — doing so risks labeling a plaintiff firm
+  // (e.g., Kilsheimer) as defense counsel, which burns sales credibility.
+  const defenseFirms = knownDefenseFirms;
+  // Unknown firms are kept separately and shown without a side label.
+  const unclassifiedFirms = unknownFirms;
 
   const plaintiffFirms = knownPlaintiffFirms;
   const primaryFirm = defenseFirms[0] || null;
