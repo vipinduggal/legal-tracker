@@ -287,12 +287,16 @@ function rtab(tab,a){
         }
         h+='<div style="font-size:11px;color:var(--g4);margin-bottom:5px">'+l.period+'</div>';
         h+='<div style="font-size:12px;color:var(--g6);margin-bottom:8px">'+l.summary+'</div>';
-        if(l.outside_counsel_firm||l.counsel){
+        // Three-bucket counsel display: Defense / Plaintiff / Other
+        var defF=(l.all_counsel_firms||[]),plaF=(l.plaintiff_counsel||[]),othF=(l.unclassified_counsel||[]);
+        if(defF.length||plaF.length||othF.length||l.outside_counsel_firm){
           h+='<div style="background:var(--g0);border-radius:var(--r);padding:8px 10px;margin-bottom:6px">';
-          h+='<div style="font-size:11px;font-weight:600;color:var(--g5);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">Outside Counsel</div>';
-          h+='<div style="font-size:13px;font-weight:600;color:var(--g9)">'+(l.outside_counsel_firm||l.counsel)+'</div>';
+          h+='<div style="font-size:11px;font-weight:600;color:var(--g5);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Counsel on case</div>';
+          h+='<div style="font-size:12px;margin-bottom:3px"><strong style="color:#166534">Defense:</strong> '+(defF.length?defF.join(', '):'<span style="color:#B45309;background:#FEF3C7;padding:1px 6px;border-radius:3px">Unknown — verify before outreach</span>')+'</div>';
+          if(plaF.length)h+='<div style="font-size:12px;margin-bottom:3px"><strong style="color:#991B1B">Plaintiff:</strong> '+plaF.join(', ')+'</div>';
+          if(othF.length)h+='<div style="font-size:12px;margin-bottom:3px"><strong style="color:#6B7280">Other counsel:</strong> <span style="color:#6B7280">'+othF.join(', ')+'</span></div>';
           var dPartners=(l.lead_partners||[]).filter(function(p){return p&&p.length>3&&p.length<60&&!p.toLowerCase().includes('e-filing')&&!p.toLowerCase().includes('currently')&&!p.toLowerCase().includes('attorney,')&&!p.toLowerCase().includes('direct:')&&!p.match(/^\d/)&&p.split(' ').length>=2;});
-          if(dPartners.length)h+='<div style="font-size:12px;color:var(--g6);margin-top:2px">&#128100; '+dPartners.slice(0,4).join(' &middot; ')+'</div>';
+          if(dPartners.length)h+='<div style="font-size:12px;color:var(--g6);margin-top:4px">&#128100; '+dPartners.slice(0,4).join(' &middot; ')+'</div>';
           h+='</div>';
         }
         if(l.key_dates&&l.key_dates.length){
@@ -314,20 +318,17 @@ function rtab(tab,a){
       otherActive.forEach(function(l){
         h+='<div class="ir"><div class="irt"><span class="iti">'+l.type+(l.is_new?'<span class="nt">NEW</span>':'')+'</span>'+sbdg(l.status)+'</div>';
         h+='<div class="ipe">'+l.period+'</div><div class="isu">'+l.summary+'</div>';
-        var counsel=l.outside_counsel_firm||l.counsel||'Unknown';
-        var counselLabel = l.counsel_role === 'plaintiff' ? 'Company counsel' :
-          l.counsel_role === 'defense' ? 'Defense counsel' :
-          l.counsel_role === 'plaintiff_only' ? 'Plaintiff counsel (defense TBD)' :
-          'Outside counsel';
-        h+='<div class="ico">'+counselLabel+': <strong>'+counsel+'</strong>';
+        // Three-bucket counsel display: Defense / Plaintiff / Other
+        var defF2=(l.all_counsel_firms||[]),plaF2=(l.plaintiff_counsel||[]),othF2=(l.unclassified_counsel||[]);
+        var defenseStr = defF2.length ? defF2.join(', ') : '<span style="color:#B45309;background:#FEF3C7;padding:1px 5px;border-radius:3px">Unknown — verify before outreach</span>';
+        h+='<div class="ico"><strong style="color:#166534">Defense:</strong> '+defenseStr;
         var aPartners=(l.lead_partners||[]).filter(function(p){
           return p&&p.length>4&&p.length<60&&!p.toLowerCase().includes('e-filing')&&
           !p.toLowerCase().includes('currently')&&!p.match(/^\d/)&&p.split(' ').length>=2;
         });
-        if(aPartners.length)h+=' &mdash; '+aPartners.slice(0,3).join(', ');
-        if(l.plaintiff_counsel&&l.plaintiff_counsel.length){
-          h+='<div style="font-size:11px;color:var(--g4);margin-top:2px">Plaintiff counsel: '+l.plaintiff_counsel.join(', ')+'</div>';
-        }
+        if(aPartners.length&&defF2.length)h+=' &mdash; '+aPartners.slice(0,3).join(', ');
+        if(plaF2.length)h+='<div style="font-size:11px;color:var(--g4);margin-top:2px"><strong style="color:#991B1B">Plaintiff:</strong> '+plaF2.join(', ')+'</div>';
+        if(othF2.length)h+='<div style="font-size:11px;color:var(--g4);margin-top:2px"><strong style="color:#6B7280">Other counsel:</strong> '+othF2.join(', ')+'</div>';
         if(l.counsel_note){
           h+='<div style="font-size:11px;color:var(--amber);margin-top:2px">&#9888; '+l.counsel_note+'</div>';
         }
