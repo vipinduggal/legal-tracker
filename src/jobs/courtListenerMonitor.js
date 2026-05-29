@@ -203,6 +203,7 @@ function extractDefenseCounsel(attorneys, firms, parties, companyName, companyIs
       attorneys: validAttorneys.slice(0, 4),
       primary_firm: defenseFirms[0] || validFirms[0] || null,
       plaintiff_firms: [],
+      unclassified_firms: unclassifiedFirms.slice(0, 5),
       counsel_role: "plaintiff",
     };
   }
@@ -229,6 +230,7 @@ function extractDefenseCounsel(attorneys, firms, parties, companyName, companyIs
     attorneys: defenseAttorneys.slice(0, 4),
     primary_firm: primaryFirm,
     plaintiff_firms: plaintiffFirms.slice(0, 2),
+    unclassified_firms: unclassifiedFirms.slice(0, 5),
     counsel_role: primaryFirm ? "defense" : (plaintiffFirms.length ? "plaintiff_only" : "unknown"),
     company_is_defendant: true,
   };
@@ -423,6 +425,7 @@ function buildLitItem(searchResult, companyName) {
     status: "Pending",
     outside_counsel_firm: hasDefense ? counsel.primary_firm : null,
     all_counsel_firms: counsel?.firms || [],
+    unclassified_counsel: counsel?.unclassified_firms || [],
     lead_partners: hasDefense ? (counsel?.attorneys || []) : [],
     plaintiff_counsel: counsel?.plaintiff_firms || [],
     counsel_verified: hasDefense,
